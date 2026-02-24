@@ -1,67 +1,114 @@
 "use client";
-import { useState } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
-import { Coins, Loader2 } from "lucide-react";
+
+import { useEffect, useRef, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { loadPaymentWidget, PaymentWidgetInstance } from "@tosspayments/payment-widget-sdk";
+
+// In a real app, use NEXT_PUBLIC_TOSS_CLIENT_KEY from .env
+// We will fallback to the official Toss test key if env is missing
+const TOSS_CLIENT_KEY = process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY || "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm";
 
 export default function CheckoutPage() {
     const searchParams = useSearchParams();
-    const router = useRouter();
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState("");
+    const product = searchParams.get("product"); // "PRO_PACK" or "PREMIUM_PACK"
 
-    const product = searchParams.get("product") || "PAID_TIER_1";
-    const cost = product === "PAID_TIER_2" ? 5 : 3;
+    const [paymentWidget, setPaymentWidget] = useState<PaymentWidgetInstance | null>(null);
+    const [orderInfo, setOrderInfo] = useState<any>(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
-    const handleMockPay = async () => {
-        setLoading(true);
-        setError("");
+    const paymentMethodsWidgetRef = useRef<any>(null);
 
-        // Simulate payment processing through our dedicated testing webhook mock
-        try {
-            const res = await fetch("/api/webhooks/payment/mock", {
-                method: "POST",
-                body: JSON.stringify({ amount: cost, product }),
-                headers: { "Content-Type": "application/json" }
-            });
-
-            if (!res.ok) throw new Error("Payment failed verification");
-
-            // Success, redirect back
-            router.push("/");
-        } catch (e: any) {
-            setError(e.message);
+    useEffect(() => {
+        if (!product) {
+            setError("No product selected.");
             setLoading(false);
+            return;
+        }
+
+        // Initialize Order from our Server
+        fetch("/api/orders", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ product })
+        })
+            .then(res => res.json())
+            .then(async (data) => {
+                if (data.error) throw new Error(data.error);
+                setOrderInfo(data);
+
+                // Initialize Toss Widget
+                const widget = await loadPaymentWidget(TOSS_CLIENT_KEY, "@anonymous"); // using anonymous for simplicity, or customerKey
+                setPaymentWidget(widget);
+            })
+            .catch(err => {
+                console.error(err);
+                setError(err.message);
+            })
+            .finally(() => {
+                setLoading(false);
+            });
+    }, [product]);
+
+    useEffect(() => {
+        if (paymentWidget && orderInfo) {
+            // Render Payment Method UI
+            const paymentMethodsWidget = paymentWidget.renderPaymentMethods(
+                "#payment-method",
+                { value: orderInfo.amount },
+                { variantKey: "DEFAULT" }
+            );
+
+            // Render Agreement UI
+            paymentWidget.renderAgreement(
+                "#agreement",
+                { variantKey: "AGREEMENT" }
+            );
+
+            paymentMethodsWidgetRef.current = paymentMethodsWidget;
+        }
+    }, [paymentWidget, orderInfo]);
+
+    const handlePaymentRequest = async () => {
+        if (!paymentWidget || !orderInfo) return;
+
+        try {
+            await paymentWidget.requestPayment({
+                orderId: orderInfo.orderId,
+                orderName: orderInfo.orderName,
+                successUrl: \`\${window.location.origin}/checkout/success\`,
+                failUrl: \`\${window.location.origin}/checkout/fail\`,
+                customerEmail: orderInfo.customerEmail,
+                customerName: orderInfo.customerName,
+            });
+        } catch (err: any) {
+             console.error("Payment failed", err);
+             // handle Toss specific error codes if needed
         }
     };
 
+    if (loading) return <div className="p-8 text-center text-gray-500">Loading checkout...</div>;
+    if (error) return <div className="p-8 text-center text-red-500">Error: {error}</div>;
+
     return (
-        <div className="min-h-[calc(100vh-64px)] bg-gray-50 flex items-center justify-center p-6">
-            <div className="bg-white p-8 rounded-2xl shadow-xl max-w-md w-full border border-gray-100 text-center space-y-6">
-                <div className="bg-blue-50 w-20 h-20 mx-auto rounded-full flex items-center justify-center text-blue-600 shadow-sm mb-4">
-                    <Coins size={40} />
+        <div className="min-h-screen bg-gray-50 flex flex-col items-center py-12 px-4 sm:px-6 lg:px-8">
+            <div className="max-w-md w-full bg-white p-8 rounded-lg shadow">
+                <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">Complete Purchase</h2>
+                
+                <div className="mb-6 p-4 bg-gray-100 rounded-lg flex justify-between items-center">
+                    <span className="font-medium text-gray-700">{orderInfo?.orderName}</span>
+                    <span className="text-xl font-bold text-blue-600">₩{orderInfo?.amount.toLocaleString()}</span>
                 </div>
 
-                <h1 className="text-2xl font-black text-gray-900">Purchase Credits</h1>
-                <p className="text-gray-500">You are buying <b>{cost} Credits</b> to unlock the {product.replace("PAID_TIER_", "Tier ")} generation.</p>
+                <div id="payment-method"></div>
+                <div id="agreement"></div>
 
-                <div className="bg-gray-50 p-6 rounded-xl border border-gray-200">
-                    <div className="flex justify-between items-center text-lg font-bold">
-                        <span className="text-gray-600">Total Price</span>
-                        <span className="text-blue-600">₩{cost * 1000}</span>
-                    </div>
-                </div>
-
-                {error && <div className="text-red-500 font-semibold bg-red-50 p-3 rounded">{error}</div>}
-
-                <button
-                    onClick={handleMockPay}
-                    disabled={loading}
-                    className="w-full bg-blue-600 text-white font-bold py-4 rounded-xl hover:bg-blue-700 transition flex items-center justify-center gap-2 shadow-lg disabled:opacity-50"
+                <button 
+                    onClick={handlePaymentRequest}
+                    className="mt-6 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded transition-colors"
                 >
-                    {loading ? <Loader2 className="animate-spin" /> : "Pay with Toss/PortOne (Mock)"}
+                    Pay Now
                 </button>
-
-                <p className="text-xs text-gray-400">This is a simulated payment gateway for development mode.</p>
             </div>
         </div>
     );

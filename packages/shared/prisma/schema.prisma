@@ -99,9 +99,14 @@ model Order {
   amount          Int
   currency        String   @default("KRW")
   product         String
-  status          String   @default("PENDING") // PENDING, PAID, FAILED, CANCELED
+  status          String   @default("PENDING") // PENDING, PAID, WAITING_FOR_DEPOSIT, FAILED, CANCELED
   provider        String   @default("MOCK")    // MOCK, TOSS, PORTONE
   providerTxId    String?  @unique
+  paymentKey      String?  @unique
+  paymentStatus   String?
+  paymentMethod   String?
+  paymentSecret   String?
+  providerPayload String?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
