@@ -139,3 +139,9 @@ model Source {
 
   job        Job      @relation(fields: [jobId], references: [id], onDelete: Cascade)
 }
+
+model AdminConfig {
+  id         String   @id @default("singleton")
+  activePromptVersion String @default("v1")
+  updatedAt  DateTime @updatedAt
+}
