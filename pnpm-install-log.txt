@@ -1,0 +1,43 @@
+Scope: all 4 workspace projects
+Progress: resolved 1, reused 0, downloaded 0, added 0
+apps/worker                              |  WARN  deprecated @types/dompurify@3.2.0
+apps/worker                              |  WARN  deprecated @types/redis@4.0.11
+Progress: resolved 28, reused 22, downloaded 0, added 0
+Progress: resolved 34, reused 31, downloaded 0, added 0
+Progress: resolved 35, reused 32, downloaded 0, added 0
+Progress: resolved 36, reused 34, downloaded 0, added 0
+Progress: resolved 55, reused 47, downloaded 0, added 0
+Progress: resolved 92, reused 84, downloaded 0, added 0
+Progress: resolved 110, reused 102, downloaded 0, added 0
+Progress: resolved 152, reused 134, downloaded 0, added 0
+Progress: resolved 183, reused 151, downloaded 0, added 0
+Progress: resolved 195, reused 157, downloaded 0, added 0
+Progress: resolved 234, reused 168, downloaded 0, added 0
+Progress: resolved 263, reused 179, downloaded 0, added 0
+Progress: resolved 309, reused 191, downloaded 0, added 0
+Progress: resolved 318, reused 206, downloaded 0, added 0
+ WARN  Request took 11163ms: https://registry.npmjs.org/vite
+Progress: resolved 370, reused 233, downloaded 0, added 0
+Progress: resolved 386, reused 272, downloaded 0, added 0
+ WARN  Request took 10728ms: https://registry.npmjs.org/scheduler
+ WARN  Request took 11911ms: https://registry.npmjs.org/eslint-plugin-react-hooks
+Progress: resolved 394, reused 290, downloaded 0, added 0
+Progress: resolved 420, reused 304, downloaded 0, added 0
+Progress: resolved 435, reused 311, downloaded 0, added 0
+Progress: resolved 485, reused 333, downloaded 0, added 0
+Progress: resolved 513, reused 342, downloaded 0, added 0
+Progress: resolved 554, reused 355, downloaded 0, added 0
+Progress: resolved 579, reused 368, downloaded 0, added 0
+Progress: resolved 601, reused 380, downloaded 0, added 0
+Progress: resolved 612, reused 390, downloaded 0, added 0
+Progress: resolved 635, reused 405, downloaded 0, added 0
+Progress: resolved 653, reused 416, downloaded 0, added 0
+ WARN  Request took 13385ms: https://registry.npmjs.org/react-is
+Progress: resolved 659, reused 433, downloaded 0, added 0
+ WARN  Request took 12455ms: https://registry.npmjs.org/axe-core
+Progress: resolved 666, reused 457, downloaded 0, added 0
+Progress: resolved 668, reused 467, downloaded 0, added 0
+Progress: resolved 668, reused 484, downloaded 0, added 0
+Progress: resolved 668, reused 510, downloaded 0, added 0
+Packages: +521
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

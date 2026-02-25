@@ -15,7 +15,7 @@
     "next-auth": "^4.24.6",
     "react": "19.2.3",
     "react-dom": "19.2.3",
-    "shared": "workspace:*",
+    "shared": "*",
     "uuid": "^13.0.0"
   },
   "devDependencies": {

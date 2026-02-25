@@ -2,6 +2,10 @@
   "name": "riroschool-portfolio-generator",
   "version": "1.0.0",
   "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
     "dev:web": "pnpm --filter web dev",
     "dev:worker": "pnpm --filter worker dev",
