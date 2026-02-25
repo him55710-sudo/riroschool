@@ -25,7 +25,7 @@ GOOGLE_CLIENT_SECRET="your_google_client_secret_here"
 
 ## Testing the Authentication Flow
 
-1. Start the development server: `npm run dev`.
+1. Start the development server: `pnpm dev`.
 2. Open `http://localhost:3000/` in an incognito window.
 3. Because the root route (`/`) is protected by middleware, you should be automatically redirected to `/login`.
 4. Click the **"Google 계정으로 로그인"** (Login with Google) button.

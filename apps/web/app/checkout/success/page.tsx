@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 
-export default function CheckoutSuccessPage() {
+function CheckoutSuccessContent() {
     const searchParams = useSearchParams();
     const paymentKey = searchParams.get("paymentKey");
     const orderId = searchParams.get("orderId");
@@ -108,5 +108,13 @@ export default function CheckoutSuccessPage() {
                 )}
             </div>
         </div>
+    );
+}
+
+export default function CheckoutSuccessPage() {
+    return (
+        <Suspense fallback={<div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">분석 중...</div>}>
+            <CheckoutSuccessContent />
+        </Suspense>
     );
 }

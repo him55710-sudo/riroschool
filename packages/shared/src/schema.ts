@@ -3,7 +3,7 @@ import { z } from "zod";
 export const JobCreateSchema = z.object({
     topic: z.string().min(2, "Topic must be at least 2 characters"),
     language: z.string().default("Korean"),
-    tier: z.enum(["FREE", "PAID_TIER_1", "PAID_TIER_2"]).default("FREE"),
+    tier: z.enum(["FREE", "PRO_PACK", "PREMIUM_PACK"]).default("FREE"),
     pageRangePreset: z.enum(["FREE_10", "PAID_20", "PAID_30"]).default("FREE_10")
 });
 

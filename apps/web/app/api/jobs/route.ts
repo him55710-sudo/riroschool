@@ -5,8 +5,8 @@ import { authOptions } from "../auth/[...nextauth]/route";
 
 const TIER_COSTS: Record<string, number> = {
     FREE: 0,
-    PAID_TIER_1: 3,
-    PAID_TIER_2: 5,
+    PRO_PACK: 3,
+    PREMIUM_PACK: 5,
 };
 
 export async function POST(req: Request) {

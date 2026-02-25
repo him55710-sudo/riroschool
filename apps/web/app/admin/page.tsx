@@ -48,21 +48,21 @@ export default async function AdminPage() {
                             if (qaArtifact && qaArtifact.metadata) {
                                 try {
                                     const parsed = JSON.parse(qaArtifact.metadata);
-                                    qaSummary = \`Score: \${parsed.score}/100\`;
-                                } catch(e) { }
+                                    qaSummary = `Score: ${parsed.score}/100`;
+                                } catch (e) { }
                             }
 
-                        return (
-                        <tr key={job.id} className="border-b">
-                            <td className="py-2 text-sm text-gray-500">{job.id}</td>
-                            <td className="py-2">{job.topic}</td>
-                            <td className="py-2">
-                                <span className="text-xs bg-gray-200 px-2 py-1 rounded">{job.tier}</span>
-                            </td>
-                            <td className="py-2">{job.status}</td>
-                            <td className="py-2 text-sm">{qaSummary}</td>
-                        </tr>
-                        );
+                            return (
+                                <tr key={job.id} className="border-b">
+                                    <td className="py-2 text-sm text-gray-500">{job.id}</td>
+                                    <td className="py-2">{job.topic}</td>
+                                    <td className="py-2">
+                                        <span className="text-xs bg-gray-200 px-2 py-1 rounded">{job.tier}</span>
+                                    </td>
+                                    <td className="py-2">{job.status}</td>
+                                    <td className="py-2 text-sm">{qaSummary}</td>
+                                </tr>
+                            );
                         })}
                     </tbody>
                 </table>

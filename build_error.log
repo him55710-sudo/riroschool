@@ -1,0 +1,52 @@
+
+> web@0.1.0 build C:\Users\임현수\Downloads\리로스쿨 자동화 프로젝트\apps\web
+> next build
+
+▲ Next.js 16.1.6 (Turbopack)
+- Environments: .env
+
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+  Creating an optimized production build ...
+Turbopack build encountered 1 warnings:
+[externals]/@prisma/client
+unexpected export *
+export * used with module [externals]/@prisma/client [external] (@prisma/client, cjs, [project]/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client) which is a CommonJS module with exports only available at runtime
+List all export names manually (`export { a, b, c } from "...") or rewrite the module to ESM, to avoid the additional runtime code.`
+
+Import trace:
+  external:
+    [externals]/@prisma/client [external]
+    ./packages/shared/src/db.ts [App Route]
+    ./apps/web/app/api/webhooks/payment/mock/route.ts [App Route]
+
+
+
+> Build error occurred
+Error: Turbopack build failed with 1 errors:
+./apps/web/app/api/webhooks/payment/mock/route.ts:3:1
+Module not found: Can't resolve '../../auth/[...nextauth]/route'
+[0m [90m 1 |[39m [36mimport[39m { [33mNextResponse[39m } [36mfrom[39m [32m'next/server'[39m[33m;[39m
+ [90m 2 |[39m [36mimport[39m { getServerSession } [36mfrom[39m [32m"next-auth/next"[39m[33m;[39m
+[31m[1m>[22m[39m[90m 3 |[39m [36mimport[39m { authOptions } [36mfrom[39m [32m"../../auth/[...nextauth]/route"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 4 |[39m [36mimport[39m { paymentProvider[33m,[39m grantCredits[33m,[39m prisma } [36mfrom[39m [32m'shared'[39m[33m;[39m
+ [90m 5 |[39m
+ [90m 6 |[39m [36mexport[39m [36masync[39m [36mfunction[39m [33mPOST[39m(req[33m:[39m [33mRequest[39m) {[0m
+
+
+
+Import trace:
+  App Route:
+    ./apps/web/app/api/webhooks/payment/mock/route.ts
+    ./packages/shared/src/storage.ts
+    ./packages/shared/src/index.ts
+    ./apps/web/app/api/orders/route.ts
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+    at <unknown> (./apps/web/app/api/webhooks/payment/mock/route.ts:3:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+C:\Users\임현수\Downloads\리로스쿨 자동화 프로젝트\apps\web:
+ ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  web@0.1.0 build: `next build`
+Exit status 1

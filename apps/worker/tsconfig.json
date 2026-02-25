@@ -9,6 +9,9 @@
         "forceConsistentCasingInFileNames": true,
         "outDir": "./dist",
         "baseUrl": ".",
+        "types": [
+            "node"
+        ],
         "paths": {
             "shared": [
                 "../../packages/shared/src/index.ts"

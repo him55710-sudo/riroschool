@@ -20,13 +20,13 @@ export async function POST(req: Request) {
         });
 
         if (!order) {
-            console.warn(\`Webhook ignored: Order \${data.orderId} not found\`);
+            console.warn(`Webhook ignored: Order ${data.orderId} not found`);
             return NextResponse.json({ status: "IGNORED" }, { status: 200 });
         }
 
         // Verify webhook authenticity (compare secrets if we have one stored from /confirm, or rely on Toss IP whitelisting in production)
         if (order.paymentSecret && data.secret && order.paymentSecret !== data.secret) {
-            console.error(\`Webhook secret mismatch for order \${order.id}\`);
+            console.error(`Webhook secret mismatch for order ${order.id}`);
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
@@ -54,7 +54,7 @@ export async function POST(req: Request) {
                     data: {
                         userId: order.userId,
                         delta: creditsToGrant,
-                        reason: \`PURCHASE_\${order.product}\`,
+                        reason: `PURCHASE_${order.product}`,
                         orderId: order.id
                     }
                 }),
@@ -63,10 +63,10 @@ export async function POST(req: Request) {
                     data: { credits: { increment: creditsToGrant } }
                 })
             ]);
-            console.log(\`[Webhook] Order \${order.id} marked PAID and \${creditsToGrant} credits granted.\`);
+            console.log(`[Webhook] Order ${order.id} marked PAID and ${creditsToGrant} credits granted.`);
         } else {
-             // Update status for other events (CANCELED, EXPIRED, etc)
-             await prisma.order.update({
+            // Update status for other events (CANCELED, EXPIRED, etc)
+            await prisma.order.update({
                 where: { id: order.id },
                 data: {
                     paymentStatus: data.status,

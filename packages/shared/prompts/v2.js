@@ -1,6 +1,7 @@
-import { Job } from "@prisma/client";
-
-export const getWritePromptV2 = (job: Job, contextText: string): string => `
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.getWritePromptV2 = void 0;
+const getWritePromptV2 = (job, contextText) => `
 You are an elite, senior-level researcher and report writer.
 Write a highly authoritative, professional, and insight-driven report on the topic: "${job.topic}".
 Language: ${job.language}
@@ -27,3 +28,4 @@ ${contextText}
 
 Generate the final markdown document below:
 `;
+exports.getWritePromptV2 = getWritePromptV2;

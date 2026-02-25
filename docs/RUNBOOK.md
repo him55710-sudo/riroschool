@@ -15,8 +15,8 @@
 2. Initialize the Local SQLite Database:
    ```bash
    cd packages/shared
-   npx prisma db push
-   npx prisma generate
+   pnpm dlx prisma db push
+   pnpm dlx prisma generate
    cd ../..
    ```
 

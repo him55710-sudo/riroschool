@@ -2,7 +2,18 @@
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { Lock, Coins } from "lucide-react";
-import type { Job, JobProgressStage } from "shared";
+import type { JobProgressStage } from "shared";
+
+interface Job {
+    id: string;
+    topic: string;
+    status: string;
+    progressStage: string;
+    progressPct?: number;
+    errorMessage?: string;
+    resultUrl?: string;
+    logs?: any[];
+}
 
 const STAGES: JobProgressStage[] = ["IDLE", "PLAN", "RESEARCH", "WRITE", "QA", "RENDER", "DONE"];
 const TIER_COSTS = { FREE: 0, PRO_PACK: 3, PREMIUM_PACK: 5 };
@@ -72,7 +83,7 @@ export default function Home() {
         return () => clearInterval(interval);
     }, [job?.id, job?.status]);
 
-    const activeStageIndex = STAGES.indexOf(job?.progressStage || "IDLE");
+    const activeStageIndex = STAGES.indexOf((job?.progressStage as JobProgressStage) || "IDLE");
 
     return (
         <main className="min-h-[calc(100vh-64px)] bg-gray-50 text-gray-900 font-sans p-8">
