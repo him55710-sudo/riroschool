@@ -35,7 +35,7 @@ export async function POST(req: Request) {
         }
 
         // Create random orderId ensuring it fits Toss requirements (6-64 chars)
-        const orderId = \`order_\${user.id}_\${Date.now()}\`;
+        const orderId = `order_${user.id}_${Date.now()}`;
 
         const order = await prisma.order.create({
             data: {

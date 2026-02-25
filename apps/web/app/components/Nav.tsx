@@ -23,7 +23,11 @@ export function Nav() {
                             </div>
                             <div className="flex items-center gap-3 text-sm font-medium text-gray-700">
                                 <div className="flex items-center gap-1.5">
-                                    <UserIcon size={16} />
+                                    {session.user?.image ? (
+                                        <img src={session.user.image} alt="User Avatar" className="w-6 h-6 rounded-full" />
+                                    ) : (
+                                        <UserIcon size={16} />
+                                    )}
                                     {session.user?.name}
                                 </div>
                                 <button
@@ -36,7 +40,7 @@ export function Nav() {
                         </>
                     ) : (
                         <button
-                            onClick={() => signIn("credentials", { callbackUrl: '/' })}
+                            onClick={() => signIn("google", { callbackUrl: '/' })}
                             className="flex items-center gap-2 bg-gray-900 text-white px-5 py-2 rounded-lg font-semibold hover:bg-gray-800 transition"
                         >
                             <LogIn size={18} /> Login

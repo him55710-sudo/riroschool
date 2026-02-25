@@ -5,7 +5,7 @@ import { Lock, Coins } from "lucide-react";
 import type { Job, JobProgressStage } from "shared";
 
 const STAGES: JobProgressStage[] = ["IDLE", "PLAN", "RESEARCH", "WRITE", "QA", "RENDER", "DONE"];
-const TIER_COSTS = { FREE: 0, PAID_TIER_1: 3, PAID_TIER_2: 5 };
+const TIER_COSTS = { FREE: 0, PRO_PACK: 3, PREMIUM_PACK: 5 };
 
 export default function Home() {
     const { data: session } = useSession();
@@ -78,8 +78,8 @@ export default function Home() {
         <main className="min-h-[calc(100vh-64px)] bg-gray-50 text-gray-900 font-sans p-8">
             <div className="max-w-3xl mx-auto space-y-8">
                 <header className="text-center pt-8">
-                    <h1 className="text-4xl font-extrabold text-blue-900 mb-2">Portfolio Report Builder</h1>
-                    <p className="text-gray-600">AI-powered 1-30 page high-quality reports.</p>
+                    <h1 className="text-4xl font-extrabold text-blue-900 mb-2">항상 앞서가는 생기부 메이커</h1>
+                    <p className="text-gray-600">AI가 도와주는 1~30쪽 분량의 압도적인 탐구 보고서를 완성해보세요!</p>
                 </header>
 
                 {errorMsg && (
@@ -94,11 +94,11 @@ export default function Home() {
                             <Lock size={32} />
                         </div>
                         <div>
-                            <h3 className="text-xl font-bold text-yellow-900">Premium Feature Locked</h3>
-                            <p className="text-yellow-800 mt-1">This tier costs <b>{cost} Credits</b>, but you only have {userCredits}.</p>
+                            <h3 className="text-xl font-bold text-yellow-900">유료 플랜 전용 기능입니다 🔒</h3>
+                            <p className="text-yellow-800 mt-1">이 플랜은 <b>{cost} 크레딧</b>이 필요합니다. (현재 보유: {userCredits} 크레딧)</p>
                         </div>
                         <a href={`/checkout?product=${tier}`} className="bg-yellow-500 text-white px-8 py-3 rounded-lg font-bold hover:bg-yellow-600 transition flex items-center gap-2 shadow-md">
-                            <Coins size={20} /> Purchase Credits
+                            <Coins size={20} /> 크레딧 충전하러 가기
                         </a>
                     </div>
                 )}
@@ -106,42 +106,42 @@ export default function Home() {
                 {!job && (
                     <form onSubmit={createJob} className="bg-white p-6 rounded-xl shadow-sm border space-y-6">
                         <div>
-                            <label className="block text-sm font-semibold mb-2">Research Topic</label>
+                            <label className="block text-sm font-semibold mb-2">어떤 주제로 보고서를 쓸까요?</label>
                             <input
                                 value={topic}
                                 onChange={e => setTopic(e.target.value)}
                                 className="w-full border p-3 rounded focus:ring-2 focus:ring-blue-500 outline-none"
-                                placeholder="e.g. Artificial Intelligence in Education 2026"
+                                placeholder="예: 생성형 AI가 미래 교육에 미치는 영향 분석"
                                 required
                             />
                         </div>
 
                         <div className="grid grid-cols-2 gap-4">
                             <div>
-                                <label className="block text-sm font-semibold mb-2">Language</label>
+                                <label className="block text-sm font-semibold mb-2">언어 선택</label>
                                 <select
                                     value={language}
                                     onChange={e => setLanguage(e.target.value)}
                                     className="w-full border p-3 rounded focus:ring-2 focus:ring-blue-500 outline-none"
                                 >
-                                    <option value="Korean">Korean</option>
-                                    <option value="English">English</option>
+                                    <option value="Korean">한국어</option>
+                                    <option value="English">영어</option>
                                 </select>
                             </div>
 
                             <div>
                                 <label className="block text-sm font-semibold mb-2 flex justify-between">
-                                    <span>Size / Tier</span>
-                                    <span className="text-gray-400 font-normal">Cost</span>
+                                    <span>보고서 분량 / 플랜</span>
+                                    <span className="text-gray-400 font-normal">필요 크레딧</span>
                                 </label>
                                 <select
                                     value={tier}
                                     onChange={e => handleTierChange(e.target.value)}
                                     className="w-full border p-3 rounded focus:ring-2 focus:ring-blue-500 outline-none text-left"
                                 >
-                                    <option value="FREE">FREE (1-10 Pages) - 0 Credits</option>
-                                    <option value="PAID_TIER_1">PRO (11-20 Pages) - 3 Credits 🔒</option>
-                                    <option value="PAID_TIER_2">PREMIUM (21-30 Pages) - 5 Credits 🔒</option>
+                                    <option value="FREE">FREE (1~10쪽) - 무료 (0 크레딧)</option>
+                                    <option value="PRO_PACK">PRO (11~20쪽) - 3 크레딧 🔒</option>
+                                    <option value="PREMIUM_PACK">PREMIUM (21~30쪽) - 5 크레딧 🔒</option>
                                 </select>
                             </div>
                         </div>
@@ -151,7 +151,7 @@ export default function Home() {
                             disabled={requireCredits && !canAfford}
                             className={`w-full font-bold py-3 rounded transition ${requireCredits && !canAfford ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-blue-600 text-white hover:bg-blue-700'}`}
                         >
-                            {requireCredits && !canAfford ? 'Insufficient Credits' : 'Generate Portfolio'}
+                            {requireCredits && !canAfford ? '크레딧이 부족합니다' : '멋진 포트폴리오 생성하기 ✨'}
                         </button>
                     </form>
                 )}
@@ -159,7 +159,7 @@ export default function Home() {
                 {/* --- Progress UI stays the same --- */}
                 {job && (
                     <div className="bg-white p-6 rounded-xl shadow-sm border space-y-6">
-                        <h2 className="text-xl font-bold border-b pb-2">Status: {job.topic}</h2>
+                        <h2 className="text-xl font-bold border-b pb-2">작업 진행 상황: {job.topic}</h2>
 
                         <div className="relative pt-4">
                             <div className="flex justify-between text-xs font-semibold text-gray-400">
@@ -181,15 +181,15 @@ export default function Home() {
 
                         {job.status === "FAILED" && (
                             <div className="bg-red-50 text-red-700 p-4 rounded font-bold border border-red-200">
-                                Job Failed: {job.errorMessage}
-                                <div className="text-sm font-normal mt-1 text-red-600">If credits were deducted, they have automatically been refunded to your account.</div>
-                                <button onClick={() => window.location.reload()} className="mt-4 px-4 py-2 bg-white text-red-700 border-red-300 border rounded cursor-pointer">Start Over</button>
+                                작업 실패: {job.errorMessage}
+                                <div className="text-sm font-normal mt-1 text-red-600">만약 크레딧이 차감되었다면 자동으로 환불 처리되었습니다.</div>
+                                <button onClick={() => window.location.reload()} className="mt-4 px-4 py-2 bg-white text-red-700 border-red-300 border rounded cursor-pointer hover:bg-red-50">처음부터 다시하기</button>
                             </div>
                         )}
 
                         {job.status === "COMPLETED" && job.resultUrl && (
                             <div className="bg-green-50 border border-green-200 p-6 rounded-lg text-center space-y-4">
-                                <h3 className="text-green-800 font-extrabold text-xl">✅ Report Generation Complete!</h3>
+                                <h3 className="text-green-800 font-extrabold text-xl">✅ 탐구 보고서 생성이 완료되었습니다!</h3>
                                 <iframe
                                     src={job.resultUrl}
                                     className="w-full h-96 border rounded bg-white shadow-inner"
@@ -198,10 +198,10 @@ export default function Home() {
 
                                 <div className="flex gap-4 pt-4">
                                     <a href={job.resultUrl} download className="flex-1 bg-green-600 text-white font-bold py-3 rounded hover:bg-green-700 transition">
-                                        Download PDF
+                                        📄 PDF 다운로드
                                     </a>
                                     <button onClick={() => navigator.clipboard.writeText("Submitted via Antigravity Portfolio Generator")} className="flex-1 bg-white border-2 border-green-600 text-green-700 font-bold py-3 rounded hover:bg-green-50 transition">
-                                        Copy for Submission
+                                        🔗 제출용 링크 복사
                                     </button>
                                 </div>
                             </div>

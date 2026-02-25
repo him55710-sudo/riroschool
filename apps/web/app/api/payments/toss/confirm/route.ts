@@ -37,7 +37,7 @@ export async function POST(req: Request) {
         const response = await fetch("https://api.tosspayments.com/v1/payments/confirm", {
             method: "POST",
             headers: {
-                "Authorization": \`Basic \${basicToken}\`,
+                "Authorization": `Basic ${basicToken}`,
                 "Content-Type": "application/json",
                 "Idempotency-Key": idempotencyKey
             },
@@ -77,7 +77,7 @@ export async function POST(req: Request) {
                     data: {
                         userId: order.userId,
                         delta: creditsToGrant,
-                        reason: \`PURCHASE_\${order.product}\`,
+                        reason: `PURCHASE_${order.product}`,
                         orderId: order.id
                     }
                 }),
@@ -87,7 +87,7 @@ export async function POST(req: Request) {
                 })
             ]);
         } else if (paymentStatus === "WAITING_FOR_DEPOSIT") {
-             await prisma.order.update({
+            await prisma.order.update({
                 where: { id: order.id },
                 data: {
                     status: "WAITING_FOR_DEPOSIT",
@@ -100,8 +100,8 @@ export async function POST(req: Request) {
             });
             // Do NOT grant credits yet. Wait for Toss Webhook to send 'DONE' payload.
         } else {
-             // Fails or Canceled
-             await prisma.order.update({
+            // Fails or Canceled
+            await prisma.order.update({
                 where: { id: order.id },
                 data: {
                     status: "FAILED",
