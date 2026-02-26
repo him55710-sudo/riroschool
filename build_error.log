@@ -20,33 +20,31 @@ Import trace:
     ./apps/web/app/api/webhooks/payment/mock/route.ts [App Route]
 
 
+✓ Compiled successfully in 5.5s
+  Running TypeScript ...
+  Collecting page data using 11 workers ...
+[Auth] CRITICAL: Missing GOOGLE_CLIENT_ID or GOOGLE_CLIENT_SECRET environment variable.
+[Auth] CRITICAL: Missing GOOGLE_CLIENT_ID or GOOGLE_CLIENT_SECRET environment variable.
+Error: Failed to collect configuration for /pricing
+    at ignore-listed frames {
+  [cause]: Error: Missing Google OAuth credentials
+      at module evaluation (C:\Users\임현수\Downloads\리로스쿨 자동화 프로젝트\apps\web\.next\server\chunks\ssr\_a96d0642._.js:37:92600)
+      at instantiateModule (C:\Users\임현수\Downloads\리로스쿨 자동화 프로젝트\apps\web\.next\server\chunks\ssr\[turbopack]_runtime.js:740:9)
+      at getOrInstantiateModuleFromParent (C:\Users\임현수\Downloads\리로스쿨 자동화 프로젝트\apps\web\.next\server\chunks\ssr\[turbopack]_runtime.js:763:12)
+      at Context.esmImport [as i] (C:\Users\임현수\Downloads\리로스쿨 자동화 프로젝트\apps\web\.next\server\chunks\ssr\[turbopack]_runtime.js:228:20)
+      at module evaluation (C:\Users\임현수\Downloads\리로스쿨 자동화 프로젝트\apps\web\.next\server\chunks\ssr\[root-of-the-server]__df892802._.js:1:4965)
+      at instantiateModule (C:\Users\임현수\Downloads\리로스쿨 자동화 프로젝트\apps\web\.next\server\chunks\ssr\[turbopack]_runtime.js:740:9)
+      at getOrInstantiateModuleFromParent (C:\Users\임현수\Downloads\리로스쿨 자동화 프로젝트\apps\web\.next\server\chunks\ssr\[turbopack]_runtime.js:763:12)
+      at Context.esmImport [as i] (C:\Users\임현수\Downloads\리로스쿨 자동화 프로젝트\apps\web\.next\server\chunks\ssr\[turbopack]_runtime.js:228:20)
+      at module evaluation (C:\Users\임현수\Downloads\리로스쿨 자동화 프로젝트\apps\web\.next\server\chunks\ssr\_7e0dc0d5._.js:1:33)
+      at instantiateModule (C:\Users\임현수\Downloads\리로스쿨 자동화 프로젝트\apps\web\.next\server\chunks\ssr\[turbopack]_runtime.js:740:9)
+}
 
 > Build error occurred
-Error: Turbopack build failed with 1 errors:
-./apps/web/app/api/webhooks/payment/mock/route.ts:3:1
-Module not found: Can't resolve '../../auth/[...nextauth]/route'
-[0m [90m 1 |[39m [36mimport[39m { [33mNextResponse[39m } [36mfrom[39m [32m'next/server'[39m[33m;[39m
- [90m 2 |[39m [36mimport[39m { getServerSession } [36mfrom[39m [32m"next-auth/next"[39m[33m;[39m
-[31m[1m>[22m[39m[90m 3 |[39m [36mimport[39m { authOptions } [36mfrom[39m [32m"../../auth/[...nextauth]/route"[39m[33m;[39m
- [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
- [90m 4 |[39m [36mimport[39m { paymentProvider[33m,[39m grantCredits[33m,[39m prisma } [36mfrom[39m [32m'shared'[39m[33m;[39m
- [90m 5 |[39m
- [90m 6 |[39m [36mexport[39m [36masync[39m [36mfunction[39m [33mPOST[39m(req[33m:[39m [33mRequest[39m) {[0m
-
-
-
-Import trace:
-  App Route:
-    ./apps/web/app/api/webhooks/payment/mock/route.ts
-    ./packages/shared/src/storage.ts
-    ./packages/shared/src/index.ts
-    ./apps/web/app/api/orders/route.ts
-
-https://nextjs.org/docs/messages/module-not-found
-
-
-    at <unknown> (./apps/web/app/api/webhooks/payment/mock/route.ts:3:1)
-    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+Error: Failed to collect page data for /pricing
+    at ignore-listed frames {
+  type: 'Error'
+}
 C:\Users\임현수\Downloads\리로스쿨 자동화 프로젝트\apps\web:
  ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  web@0.1.0 build: `next build`
 Exit status 1

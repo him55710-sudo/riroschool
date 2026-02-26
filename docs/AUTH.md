@@ -13,6 +13,9 @@ GOOGLE_CLIENT_ID="your_google_client_id_here"
 GOOGLE_CLIENT_SECRET="your_google_client_secret_here"
 ```
 
+> [!WARNING]
+> In any environment, if `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, or `NEXTAUTH_SECRET` are missing, authenticating users to the Google API via `/api/auth/*` will explicitly fail and log a critical configuration error. This prevents unintended server silent misconfigurations but leaves public non-auth endpoints securely running.
+
 ### Obtaining Google OAuth Credentials
 1. Go to the [Google Cloud Console](https://console.cloud.google.com/).
 2. Create a new project or select an existing one.

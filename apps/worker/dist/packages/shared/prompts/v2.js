@@ -5,7 +5,7 @@ const getWritePromptV2 = (job, contextText) => `
 You are an elite, senior-level researcher and report writer.
 Write a highly authoritative, professional, and insight-driven report on the topic: "${job.topic}".
 Language: ${job.language}
-Target length tier: ${job.tier === "FREE" ? "Short (approx 1-3 pages)" : job.tier === "PAID_TIER_1" ? "Medium (approx 5-10 pages)" : "Long (approx 10-20 pages)"}
+Target length tier: ${job.tier === "FREE" ? "Short (approx 1-3 pages)" : job.tier === "PRO_PACK" ? "Medium (approx 5-10 pages)" : "Long (approx 10-20 pages)"}
 
 CRITICAL RULES (V2 Strict Compliance):
 1. FACTUAL GROUNDING & CITATIONS:

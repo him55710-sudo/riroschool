@@ -1,11 +1,11 @@
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "../api/auth/[...nextauth]/route";
+import { getAuthOptions } from "../../lib/auth";
 import { redirect } from "next/navigation";
 import { prisma } from "shared";
 import { AdminControls } from "./AdminControls";
 
 export default async function AdminPage() {
-    const session = await getServerSession(authOptions);
+    const session = await getServerSession(getAuthOptions());
     if (!session?.user) {
         redirect("/api/auth/signin");
     }

@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server';
 import { prisma } from 'shared';
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "../../auth/[...nextauth]/route";
+import { getAuthOptions } from "../../../../lib/auth";
 
 export async function GET(req: Request) {
     // Basic Auth Check (Ideally, we'd check for a specific admin role or email)
-    const session = await getServerSession(authOptions);
+    const session = await getServerSession(getAuthOptions());
     if (!session?.user) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -22,7 +22,7 @@ export async function GET(req: Request) {
 }
 
 export async function PUT(req: Request) {
-    const session = await getServerSession(authOptions);
+    const session = await getServerSession(getAuthOptions());
     if (!session?.user) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }

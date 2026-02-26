@@ -4,7 +4,7 @@ export const JobCreateSchema = z.object({
     topic: z.string().min(2, "Topic must be at least 2 characters"),
     language: z.string().default("Korean"),
     tier: z.enum(["FREE", "PRO_PACK", "PREMIUM_PACK"]).default("FREE"),
-    pageRangePreset: z.enum(["FREE_10", "PAID_20", "PAID_30"]).default("FREE_10")
+    pageRangePreset: z.enum(["FREE_10", "PRO_20", "PREMIUM_30"]).default("FREE_10")
 });
 
 export type JobCreateInput = z.infer<typeof JobCreateSchema>;

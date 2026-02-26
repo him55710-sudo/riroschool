@@ -3,17 +3,17 @@ export declare const JobCreateSchema: z.ZodObject<{
     topic: z.ZodString;
     language: z.ZodDefault<z.ZodString>;
     tier: z.ZodDefault<z.ZodEnum<["FREE", "PRO_PACK", "PREMIUM_PACK"]>>;
-    pageRangePreset: z.ZodDefault<z.ZodEnum<["FREE_10", "PAID_20", "PAID_30"]>>;
+    pageRangePreset: z.ZodDefault<z.ZodEnum<["FREE_10", "PRO_20", "PREMIUM_30"]>>;
 }, "strip", z.ZodTypeAny, {
     topic: string;
     language: string;
     tier: "FREE" | "PRO_PACK" | "PREMIUM_PACK";
-    pageRangePreset: "FREE_10" | "PAID_20" | "PAID_30";
+    pageRangePreset: "FREE_10" | "PRO_20" | "PREMIUM_30";
 }, {
     topic: string;
     language?: string | undefined;
     tier?: "FREE" | "PRO_PACK" | "PREMIUM_PACK" | undefined;
-    pageRangePreset?: "FREE_10" | "PAID_20" | "PAID_30" | undefined;
+    pageRangePreset?: "FREE_10" | "PRO_20" | "PREMIUM_30" | undefined;
 }>;
 export type JobCreateInput = z.infer<typeof JobCreateSchema>;
 export declare const JobStatusSchema: z.ZodEnum<["PENDING", "PROCESSING", "COMPLETED", "FAILED"]>;

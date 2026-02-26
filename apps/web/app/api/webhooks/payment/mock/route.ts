@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "../../../auth/[...nextauth]/route";
+import { getAuthOptions } from "../../../../../lib/auth";
 import { paymentProvider, grantCredits, prisma } from 'shared';
 
 export async function POST(req: Request) {
     try {
-        const session = await getServerSession(authOptions);
+        const session = await getServerSession(getAuthOptions());
         if (!session?.user?.id) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }

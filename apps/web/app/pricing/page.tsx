@@ -1,10 +1,10 @@
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "../api/auth/[...nextauth]/route";
+import { getAuthOptions } from "../../lib/auth";
 import Link from "next/link";
 import { prisma } from "shared";
 
 export default async function PricingPage() {
-    const session = await getServerSession(authOptions);
+    const session = await getServerSession(getAuthOptions());
     let credits = 0;
 
     if (session?.user?.email) {

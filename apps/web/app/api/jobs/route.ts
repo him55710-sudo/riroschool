@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma, JobCreateSchema, TIER_LIMITS, deductCredits } from 'shared';
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "../auth/[...nextauth]/route";
+import { getAuthOptions } from "../../../lib/auth";
 
 const TIER_COSTS: Record<string, number> = {
     FREE: 0,
@@ -11,7 +11,7 @@ const TIER_COSTS: Record<string, number> = {
 
 export async function POST(req: Request) {
     try {
-        const session = await getServerSession(authOptions);
+        const session = await getServerSession(getAuthOptions());
         const userId = session?.user?.id;
 
         const body = await req.json();
@@ -72,14 +72,16 @@ export async function POST(req: Request) {
             data: { jobId: job.id, stage: 'IDLE', message: `Job created. Cost: ${cost} credits.` }
         });
 
+        console.log(`[Jobs API] Successfully created job ${job.id} for user ${userId || 'anonymous'}`);
         return NextResponse.json(job, { status: 201 });
     } catch (error: any) {
-        return NextResponse.json({ error: error.message }, { status: 400 });
+        console.error(`[Jobs API] Job creation failed: ${error.message}`, error);
+        return NextResponse.json({ error: error.message || "Failed to create job" }, { status: 400 });
     }
 }
 
 export async function GET(req: Request) {
-    const session = await getServerSession(authOptions);
+    const session = await getServerSession(getAuthOptions());
     const { searchParams } = new URL(req.url);
     const id = searchParams.get('id');
 

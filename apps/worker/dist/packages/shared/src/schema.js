@@ -5,8 +5,8 @@ const zod_1 = require("zod");
 exports.JobCreateSchema = zod_1.z.object({
     topic: zod_1.z.string().min(2, "Topic must be at least 2 characters"),
     language: zod_1.z.string().default("Korean"),
-    tier: zod_1.z.enum(["FREE", "PAID_TIER_1", "PAID_TIER_2"]).default("FREE"),
-    pageRangePreset: zod_1.z.enum(["FREE_10", "PAID_20", "PAID_30"]).default("FREE_10")
+    tier: zod_1.z.enum(["FREE", "PRO_PACK", "PREMIUM_PACK"]).default("FREE"),
+    pageRangePreset: zod_1.z.enum(["FREE_10", "PRO_20", "PREMIUM_30"]).default("FREE_10")
 });
 exports.JobStatusSchema = zod_1.z.enum(["PENDING", "PROCESSING", "COMPLETED", "FAILED"]);
 exports.JobProgressStageSchema = zod_1.z.enum(["IDLE", "PLAN", "RESEARCH", "WRITE", "QA", "RENDER", "DONE"]);

@@ -25,6 +25,18 @@
    - Copy `.env.example` to `packages/shared/.env` (contains `DATABASE_URL`).
    - Copy `.env` to `apps/worker/.env` to ensure the worker loads the Gemini API key.
 
+> [!IMPORTANT] 
+> Local vs. Production Env Checklist
+> - **Production Check**: `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `NEXTAUTH_SECRET` MUST be set for the Auth API to successfully initialize Google login. 
+> - **Toss Payments**: Real payments require `TOSS_SECRET_KEY` in production. If missing when processing `/confirm`, the API will return a 500 configuration error.
+
+## Auth Troubleshooting
+- **증상**: 로그인 클릭 시 500 에러나 'Missing Google OAuth credentials' 에러 반환. 로그인 외 기능(무료 Job 등)은 정상적으로 접속.
+- **점검 순서 (체크리스트)**:
+  1. `.env` 파일 내에 `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` 존재 여부 확인.
+  2. 개발(Development) 모드라면 `/login` UI 하단에 경고 메시지가 뜨는지 확인.
+  3. 콘솔을 열고 `[Auth] CRITICAL:` 로그가 발생했는지 파악하여 누락된 키 보충.
+
 ## 3. Running Services Locally
 Start both the Next.js Frontend and the Node Worker simultaneously using the workspace root command:
 

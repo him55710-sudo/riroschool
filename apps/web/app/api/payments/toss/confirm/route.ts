@@ -31,6 +31,11 @@ export async function POST(req: Request) {
 
         // 2. Call Toss Confirm API
         const secretKey = process.env.TOSS_SECRET_KEY || "test_sk_zXLkKEypNArWmo50nX3lmeaxYG5R";
+        if (process.env.NODE_ENV === "production" && !process.env.TOSS_SECRET_KEY) {
+            console.error(`[Toss Confirm] CRITICAL: TOSS_SECRET_KEY is missing in production. OrderID: ${orderId}`);
+            return NextResponse.json({ error: "Configuration Error" }, { status: 500 });
+        }
+
         const basicToken = Buffer.from(secretKey + ":").toString("base64");
         const idempotencyKey = uuidv4();
 

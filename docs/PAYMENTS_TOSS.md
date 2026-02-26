@@ -36,6 +36,13 @@ NEXT_PUBLIC_TOSS_CLIENT_KEY="test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm"
 TOSS_SECRET_KEY="test_sk_zXLkKEypNArWmo50nX3lmeaxYG5R"
 \`\`\`
 
+> [!CAUTION]
+> If `TOSS_SECRET_KEY` is completely missing in a `NODE_ENV === "production"` environment during order confirmation, the server will explicitly fail to prevent using test keys inadvertently.
+
+## System Observability
+- Missing keys throw explicit configuration errors.
+- Webhook signature or data mismatches trigger `[Webhook] CRITICAL Error` logs mapped closely to context (e.g., `OrderID`).
+
 ## Testing
 - Ensure the Mock Toss keys are used in development.
 - Navigate to `/pricing`. Select a package.

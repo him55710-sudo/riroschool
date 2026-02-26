@@ -78,7 +78,7 @@ export async function POST(req: Request) {
         return NextResponse.json({ success: true }, { status: 200 });
 
     } catch (error: any) {
-        console.error("Webhook processing error:", error);
+        console.error(`[Webhook] CRITICAL Error processing Toss webhook: ${error.message}`, error);
         // Return 500 so Toss retries if something threw unexpectedly
         return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
     }
