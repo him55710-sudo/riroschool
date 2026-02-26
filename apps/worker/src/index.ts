@@ -1,61 +1,79 @@
 import { createClient } from "redis";
-import { prisma, JobProgressStage } from "shared";
+import { prisma } from "shared";
 import { gatherSources } from "./stages/research";
 import { generateDraft } from "./stages/write";
 import { runQAGate } from "./stages/qa";
 import { formatReport } from "./stages/format";
 import { refundCredits } from "shared/src/credits";
 
-const redisUrl = process.env.REDIS_URL || "redis://localhost:6379";
+const redisUrl = process.env.REDIS_URL || "";
+const POLL_INTERVAL_MS = Number(process.env.WORKER_POLL_INTERVAL_MS || "4000");
+const processingJobs = new Set<string>();
+
+async function appendLog(jobId: string, stage: string, message: string) {
+    try {
+        await prisma.jobLog.create({ data: { jobId, stage, message } });
+    } catch (e) {
+        console.error(`[WORKER] Failed to write log for ${jobId}:`, e);
+    }
+}
+
+async function claimPendingJob(jobId: string) {
+    const claimed = await prisma.job.updateMany({
+        where: { id: jobId, status: "PENDING" },
+        data: {
+            status: "PROCESSING",
+            progressStage: "RESEARCH",
+            progressPct: 10,
+            errorMessage: null,
+        },
+    });
+    return claimed.count > 0;
+}
 
 async function processJob(jobId: string) {
-    const job = await prisma.job.findUnique({ where: { id: jobId } });
-    if (!job) {
-        console.error(`[WORKER] Job ${jobId} not found.`);
-        return;
-    }
+    if (processingJobs.has(jobId)) return;
+    processingJobs.add(jobId);
 
-    console.log(`[WORKER] Starting job ${jobId} - ${job.topic}`);
     try {
-        // --- 1. RESEARCH ---
-        await prisma.job.update({
-            where: { id: jobId },
-            data: {
-                status: "PROCESSING",
-                progressStage: "RESEARCH",
-                progressPct: 10
-            }
-        });
+        const claimed = await claimPendingJob(jobId);
+        if (!claimed) return;
+
+        const job = await prisma.job.findUnique({ where: { id: jobId } });
+        if (!job) return;
+
+        console.log(`[WORKER] Starting job ${jobId} - ${job.topic}`);
+        await appendLog(jobId, "RESEARCH", "Collecting sources...");
         await gatherSources(job);
 
-        // --- 2. DRAFTING ---
         await prisma.job.update({
             where: { id: jobId },
             data: {
                 progressStage: "WRITE",
-                progressPct: 40
-            }
+                progressPct: 40,
+            },
         });
+        await appendLog(jobId, "WRITE", "Generating draft...");
         const rawDraft = await generateDraft(job);
 
-        // --- 3. QA GATE ---
         await prisma.job.update({
             where: { id: jobId },
             data: {
                 progressStage: "QA",
-                progressPct: 70
-            }
+                progressPct: 70,
+            },
         });
+        await appendLog(jobId, "QA", "Running QA checks...");
         const safeDraft = await runQAGate(job, rawDraft);
 
-        // --- 4. FORMATTING ---
         await prisma.job.update({
             where: { id: jobId },
             data: {
-                progressStage: "DONE",
-                progressPct: 90
-            }
+                progressStage: "RENDER",
+                progressPct: 90,
+            },
         });
+        await appendLog(jobId, "RENDER", "Rendering final report...");
         const finalArtifact = await formatReport(job, safeDraft);
 
         await prisma.job.update({
@@ -64,11 +82,11 @@ async function processJob(jobId: string) {
                 status: "COMPLETED",
                 progressStage: "DONE",
                 progressPct: 100,
-                resultUrl: finalArtifact.url
-            }
+                resultUrl: finalArtifact.url,
+            },
         });
+        await appendLog(jobId, "DONE", "Job completed successfully.");
         console.log(`[WORKER] Finished job ${jobId}`);
-
     } catch (err: any) {
         console.error(`[WORKER] Failed job ${jobId}: ${err.message}`);
         await prisma.job.update({
@@ -76,37 +94,80 @@ async function processJob(jobId: string) {
             data: {
                 status: "FAILED",
                 progressPct: 0,
-                errorMessage: err.message
-            }
+                errorMessage: err.message,
+            },
         });
+        await appendLog(jobId, "FAILED", err.message || "Unknown worker failure");
 
-        // Refund Credits on failure automatically
-        if (job.userId && job.tier !== "FREE") {
+        const failedJob = await prisma.job.findUnique({ where: { id: jobId } });
+        if (failedJob?.userId && failedJob.tier !== "FREE") {
             try {
                 await refundCredits(jobId);
             } catch (refundErr: any) {
                 console.error(`[WORKER] Failed to refund job ${jobId}: ${refundErr.message}`);
             }
         }
+    } finally {
+        processingJobs.delete(jobId);
+    }
+}
+
+async function pollPendingJobs() {
+    try {
+        const pending = await prisma.job.findMany({
+            where: { status: "PENDING" },
+            select: { id: true },
+            orderBy: { createdAt: "asc" },
+            take: 3,
+        });
+
+        for (const job of pending) {
+            void processJob(job.id);
+        }
+    } catch (e) {
+        console.error("[WORKER] Polling failed:", e);
+    }
+}
+
+async function startRedisSubscriber() {
+    if (!redisUrl) {
+        console.warn("[WORKER] REDIS_URL is empty. Running in DB polling mode only.");
+        return;
+    }
+
+    try {
+        const subscriber = createClient({ url: redisUrl });
+        await subscriber.connect();
+        console.log("[WORKER] Redis connected. Subscribing to job-queue...");
+
+        await subscriber.subscribe("job-queue", async (message) => {
+            try {
+                const payload = JSON.parse(message);
+                if (payload.type === "NEW_JOB" && payload.jobId) {
+                    void processJob(payload.jobId);
+                }
+            } catch (e) {
+                console.error("[WORKER] Invalid queue payload:", e);
+            }
+        });
+    } catch (e) {
+        console.warn("[WORKER] Redis subscribe unavailable. Polling mode will continue.", e);
     }
 }
 
 async function startWorker() {
-    const subscriber = createClient({ url: redisUrl });
-    await subscriber.connect();
+    await startRedisSubscriber();
+    await pollPendingJobs();
 
-    console.log(`[WORKER] Listening for jobs on 'job-queue' ...`);
-    subscriber.subscribe("job-queue", async (message) => {
-        const payload = JSON.parse(message);
-        if (payload.type === "NEW_JOB") {
-            await processJob(payload.jobId);
-        }
-    });
-
-    // Dummy process to keep alive
     setInterval(() => {
-        console.log(`[WORKER] Heartbeat...`);
+        void pollPendingJobs();
+    }, POLL_INTERVAL_MS);
+
+    setInterval(() => {
+        console.log("[WORKER] Heartbeat...");
     }, 60000);
 }
 
-startWorker().catch(console.error);
+startWorker().catch((err) => {
+    console.error("[WORKER] Fatal startup error:", err);
+});

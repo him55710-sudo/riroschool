@@ -5,6 +5,16 @@ interface SearchProvider {
     search(query: string, limit?: number): Promise<{ title: string, url: string, content?: string }[]>;
 }
 
+async function fetchWithTimeout(url: string, init: RequestInit = {}, timeoutMs = 8000) {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), timeoutMs);
+    try {
+        return await fetch(url, { ...init, signal: controller.signal });
+    } finally {
+        clearTimeout(timeout);
+    }
+}
+
 class FallbackSearchProvider implements SearchProvider {
     async search(query: string, limit = 3) {
         // A smart fallback that tries Wikipedia first, then returns curated mocks
@@ -12,7 +22,7 @@ class FallbackSearchProvider implements SearchProvider {
         const sources = [];
 
         try {
-            const res = await fetch(`${WIKI_API}${encodeURIComponent(query)}`);
+            const res = await fetchWithTimeout(`${WIKI_API}${encodeURIComponent(query)}`, {}, 7000);
             const data = await res.json();
             const pages = data.query?.pages;
             const pageId = Object.keys(pages || {})[0];
@@ -44,7 +54,7 @@ class TavilySearchProvider implements SearchProvider {
     constructor(apiKey: string) { this.apiKey = apiKey; }
 
     async search(query: string, limit = 5) {
-        const res = await fetch("https://api.tavily.com/search", {
+        const res = await fetchWithTimeout("https://api.tavily.com/search", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -54,7 +64,7 @@ class TavilySearchProvider implements SearchProvider {
                 include_images: false,
                 max_results: limit
             })
-        });
+        }, 10000);
         if (!res.ok) throw new Error("Tavily search failed");
         const data = await res.json();
         return data.results.map((r: any) => ({
@@ -69,7 +79,7 @@ async function scrapeSafely(url: string, preFetchedContent?: string): Promise<st
     if (preFetchedContent) return preFetchedContent.substring(0, 1500); // use search snippet if available
 
     try {
-        const html = await fetch(url).then(r => r.text());
+        const html = await fetchWithTimeout(url, {}, 7000).then(r => r.text());
         const dom = new JSDOM(html);
         const document = dom.window.document;
 
@@ -90,7 +100,12 @@ async function scrapeSafely(url: string, preFetchedContent?: string): Promise<st
 export async function gatherSources(job: Job) {
     console.log(`[RESEARCH] Gathering sources for '${job.topic}'`);
 
-    const reqSources = job.tier === "PAID_TIER_2" ? 15 : (job.tier === "PAID_TIER_1" ? 10 : 3);
+    const reqSources =
+        job.tier === "PREMIUM_PACK"
+            ? 15
+            : job.tier === "PRO_PACK"
+              ? 10
+              : 3;
 
     let provider: SearchProvider;
     if (process.env.TAVILY_API_KEY && process.env.TAVILY_API_KEY !== 'mock_tavily') {
@@ -118,7 +133,7 @@ export async function gatherSources(job: Job) {
             title: res.title,
             url: res.url,
             notes: safeContent,
-            createdAt: new Date() // represents accessedAt essentially
+            accessedAt: new Date()
         });
     }
 

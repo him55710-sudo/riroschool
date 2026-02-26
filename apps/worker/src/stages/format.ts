@@ -37,7 +37,7 @@ export async function formatReport(job: Job, draftArtifact: Artifact) {
     ADD_ATTR: ['class']
   });
 
-  const selectedTheme = job.language === 'ko' ? THEME_MINIMAL : THEME_ACADEMIC; // temporary logic for theme picking
+  const selectedTheme = job.language === "Korean" ? THEME_MINIMAL : THEME_ACADEMIC;
 
   const fullHtml = `
 <!DOCTYPE html>
@@ -88,7 +88,7 @@ export async function formatReport(job: Job, draftArtifact: Artifact) {
       type: "HTML_REPORT",
       storageKey: `local://final/${job.id}.html`,
       metadata: fullHtml,
-      url: `/dashboard/reports/${job.id}`
+      url: `/api/jobs/result?id=${job.id}`
     }
   });
 

@@ -1,141 +1,118 @@
+import Link from "next/link";
 import { getServerSession } from "next-auth/next";
 import { getAuthOptions } from "../../lib/auth";
-import Link from "next/link";
 import { prisma } from "shared";
+
+const PLANS = [
+    {
+        id: "FREE",
+        title: "FREE",
+        subtitle: "빠른 확인용 기본 리포트",
+        price: "0원",
+        credits: "0크레딧",
+        points: ["1-10쪽", "기본 생성 속도", "가볍게 시작하기 좋음"],
+        cta: { label: "무료로 시작", href: "/" },
+        featured: false,
+    },
+    {
+        id: "PRO_PACK",
+        title: "PRO",
+        subtitle: "균형 잡힌 분량과 품질",
+        price: "3,000원",
+        credits: "3크레딧",
+        points: ["11-20쪽", "참고 자료 강화", "구조 완성도 향상"],
+        cta: { label: "PRO 구매", href: "/checkout?product=PRO_PACK" },
+        featured: true,
+    },
+    {
+        id: "PREMIUM_PACK",
+        title: "PREMIUM",
+        subtitle: "심화 분석용 고급 리포트",
+        price: "5,000원",
+        credits: "5크레딧",
+        points: ["21-30쪽", "가장 깊은 분석", "최종 제출용 추천"],
+        cta: { label: "PREMIUM 구매", href: "/checkout?product=PREMIUM_PACK" },
+        featured: false,
+    },
+];
 
 export default async function PricingPage() {
     const session = await getServerSession(getAuthOptions());
-    let credits = 0;
 
+    let credits = 0;
     if (session?.user?.email) {
         const user = await prisma.user.findUnique({
             where: { email: session.user.email },
-            select: { credits: true }
+            select: { credits: true },
         });
         credits = user?.credits || 0;
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 text-gray-900">
-            <div className="max-w-7xl w-full space-y-8">
-                <div className="text-center">
-                    <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
-                        크레딧 요금제
-                    </h2>
-                    <p className="mt-2 text-sm text-gray-600">
-                        필요한 보고서 분량에 맞춰 가장 알맞은 요금제를 선택하세요 ✨
-                    </p>
-                    {session?.user && (
-                        <div className="mt-4 p-4 bg-blue-50 text-blue-800 rounded-lg inline-block">
-                            <span className="font-semibold">현재 보유 크레딧:</span> {credits} 크레딧
+        <main className="mx-auto max-w-6xl px-5 py-10 md:px-8 md:py-14">
+            <section className="toss-card p-7 md:p-9">
+                <div className="flex flex-wrap items-center justify-between gap-4">
+                    <div>
+                        <p className="toss-chip">요금제</p>
+                        <h1 className="mt-3 text-3xl font-extrabold text-[var(--toss-ink)] md:text-4xl">나에게 맞는 플랜 선택</h1>
+                        <p className="mt-2 text-sm text-[var(--toss-sub)]">
+                            FREE로 시작하고, 더 긴 분량이 필요할 때 PRO/PREMIUM으로 업그레이드하세요.
+                        </p>
+                    </div>
+                    {session?.user ? (
+                        <div className="rounded-2xl border border-[var(--toss-line)] bg-[#f8fbff] px-4 py-3 text-sm text-[var(--toss-sub)]">
+                            현재 잔액: <strong className="text-[var(--toss-primary)]">{credits}크레딧</strong>
                         </div>
+                    ) : (
+                        <Link href="/login?next=/pricing" className="toss-secondary-btn inline-flex px-4 py-2 text-sm">
+                            로그인하고 구매
+                        </Link>
                     )}
                 </div>
+            </section>
 
-                <div className="mt-12 space-y-4 sm:space-y-0 sm:grid sm:grid-cols-1 md:grid-cols-3 sm:gap-6 lg:max-w-4xl lg:mx-auto xl:max-w-none xl:mx-0 xl:grid-cols-3">
+            <section className="mt-6 grid gap-4 md:grid-cols-3">
+                {PLANS.map((plan) => {
+                    const href = session?.user ? plan.cta.href : "/login?next=/pricing";
+                    const label = session?.user ? plan.cta.label : "로그인 후 이용";
 
-                    {/* FREE Tier */}
-                    <div className="border border-gray-200 rounded-lg shadow-sm divide-y divide-gray-200 bg-white">
-                        <div className="p-6">
-                            <h2 className="text-lg leading-6 font-medium text-gray-900">FREE</h2>
-                            <p className="mt-4 text-sm text-gray-500">가벼운 요약과 기본 개요 확인에 딱 맞아요.</p>
-                            <p className="mt-8">
-                                <span className="text-4xl font-extrabold text-gray-900">무료</span>
-                            </p>
-                            <Link href="/">
-                                <button className="mt-8 block w-full bg-gray-600 border border-transparent rounded-md py-2 text-sm font-semibold text-white text-center hover:bg-gray-700 transition">
-                                    무료로 시작하기
-                                </button>
+                    return (
+                        <article
+                            key={plan.id}
+                            className={`rounded-3xl border p-6 shadow-sm ${
+                                plan.featured
+                                    ? "border-[#b9d5ff] bg-[#f5f9ff]"
+                                    : "border-[var(--toss-line)] bg-white"
+                            }`}
+                        >
+                            {plan.featured && (
+                                <span className="mb-4 inline-flex rounded-full bg-[var(--toss-primary)] px-3 py-1 text-xs font-bold text-white">
+                                    추천 플랜
+                                </span>
+                            )}
+                            <h2 className="text-xl font-extrabold text-[var(--toss-ink)]">{plan.title}</h2>
+                            <p className="mt-2 text-sm text-[var(--toss-sub)]">{plan.subtitle}</p>
+                            <p className="mt-4 text-2xl font-extrabold text-[var(--toss-ink)]">{plan.price}</p>
+                            <p className="mt-1 text-sm font-semibold text-[var(--toss-primary)]">{plan.credits}</p>
+
+                            <ul className="mt-5 space-y-2 text-sm text-[var(--toss-sub)]">
+                                {plan.points.map((item) => (
+                                    <li key={item}>- {item}</li>
+                                ))}
+                            </ul>
+
+                            <Link
+                                href={href}
+                                className={`mt-6 inline-flex w-full items-center justify-center rounded-xl px-4 py-3 text-sm font-bold ${
+                                    plan.featured ? "toss-primary-btn" : "toss-secondary-btn"
+                                }`}
+                            >
+                                {label}
                             </Link>
-                        </div>
-                        <div className="pt-6 pb-8 px-6">
-                            <h3 className="text-xs font-medium text-gray-900 tracking-wide uppercase">지원 기능</h3>
-                            <ul role="list" className="mt-6 space-y-4">
-                                <li className="flex space-x-3 text-sm text-gray-500">
-                                    <span>✓ 1~10쪽 분량</span>
-                                </li>
-                                <li className="flex space-x-3 text-sm text-gray-500">
-                                    <span>✓ 일반 속도 생성</span>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    {/* PRO Tier */}
-                    <div className="border border-blue-500 rounded-lg shadow-md divide-y divide-gray-200 bg-white relative">
-                        <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4">
-                            <span className="bg-blue-500 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">추천! 인기 플랜</span>
-                        </div>
-                        <div className="p-6">
-                            <h2 className="text-lg leading-6 font-medium text-gray-900">PRO 요금제 <span className="text-sm font-normal text-gray-500">(3 크레딧)</span></h2>
-                            <p className="mt-4 text-sm text-gray-500">상세한 구조와 깊이 있는 세특 탐구용으로 가장 많이 선택해요.</p>
-                            <p className="mt-8">
-                                <span className="text-4xl font-extrabold text-gray-900">₩3,000</span>
-                            </p>
-                            {session?.user ? (
-                                <Link href="/checkout?product=PRO_PACK">
-                                    <button className="mt-8 block w-full bg-blue-600 border border-transparent rounded-md py-2 text-sm font-semibold text-white text-center hover:bg-blue-700 transition">
-                                        3 크레딧 충전하기
-                                    </button>
-                                </Link>
-                            ) : (
-                                <Link href="/api/auth/signin">
-                                    <button className="mt-8 block w-full bg-blue-100 border border-transparent rounded-md py-2 text-sm font-semibold text-blue-700 text-center hover:bg-blue-200 transition">
-                                        로그인 후 결제하기
-                                    </button>
-                                </Link>
-                            )}
-                        </div>
-                        <div className="pt-6 pb-8 px-6">
-                            <h3 className="text-xs font-medium text-gray-900 tracking-wide uppercase">지원 기능</h3>
-                            <ul role="list" className="mt-6 space-y-4">
-                                <li className="flex space-x-3 text-sm text-gray-500">
-                                    <span className="font-semibold text-blue-600">✓ 11~20쪽 분량의 풍부한 리포트</span>
-                                </li>
-                                <li className="flex space-x-3 text-sm text-gray-500">
-                                    <span>✓ 고품질 참고문헌 및 출처 정리</span>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    {/* PREMIUM Tier */}
-                    <div className="border border-purple-500 rounded-lg shadow-sm divide-y divide-gray-200 bg-white">
-                        <div className="p-6">
-                            <h2 className="text-lg leading-6 font-medium text-gray-900">PREMIUM 요금제 <span className="text-sm font-normal text-gray-500">(5 크레딧)</span></h2>
-                            <p className="mt-4 text-sm text-gray-500">대학 학술제 수준의 깊이와 완벽한 분량을 자랑하는 완전판입니다.</p>
-                            <p className="mt-8">
-                                <span className="text-4xl font-extrabold text-gray-900">₩5,000</span>
-                            </p>
-                            {session?.user ? (
-                                <Link href="/checkout?product=PREMIUM_PACK">
-                                    <button className="mt-8 block w-full bg-purple-600 border border-transparent rounded-md py-2 text-sm font-semibold text-white text-center hover:bg-purple-700 transition">
-                                        5 크레딧 충전하기
-                                    </button>
-                                </Link>
-                            ) : (
-                                <Link href="/api/auth/signin">
-                                    <button className="mt-8 block w-full bg-purple-100 border border-transparent rounded-md py-2 text-sm font-semibold text-purple-700 text-center hover:bg-purple-200 transition">
-                                        로그인 후 결제하기
-                                    </button>
-                                </Link>
-                            )}
-                        </div>
-                        <div className="pt-6 pb-8 px-6">
-                            <h3 className="text-xs font-medium text-gray-900 tracking-wide uppercase">지원 기능</h3>
-                            <ul role="list" className="mt-6 space-y-4">
-                                <li className="flex space-x-3 text-sm text-gray-500">
-                                    <span className="font-semibold text-purple-600">✓ 21~30쪽 분량의 전문 리포트</span>
-                                </li>
-                                <li className="flex space-x-3 text-sm text-gray-500">
-                                    <span>✓ 논문급 방대한 출처 및 최대 깊이 분석</span>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-        </div>
+                        </article>
+                    );
+                })}
+            </section>
+        </main>
     );
 }
