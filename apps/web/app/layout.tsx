@@ -1,13 +1,13 @@
-import type { Metadata } from "next";
-import { Manrope, Noto_Sans_KR } from "next/font/google";
+﻿import type { Metadata } from "next";
+import { Nunito, Noto_Sans_KR } from "next/font/google";
 import "./globals.css";
 import Providers from "./providers";
 import { Nav } from "./components/Nav";
 
-const heading = Manrope({
+const heading = Nunito({
     subsets: ["latin"],
     variable: "--font-heading",
-    weight: ["700", "800"],
+    weight: ["600", "700", "800"],
 });
 
 const body = Noto_Sans_KR({
@@ -17,8 +17,8 @@ const body = Noto_Sans_KR({
 });
 
 export const metadata: Metadata = {
-    title: "리로 포트폴리오 빌더",
-    description: "토스뱅크 스타일의 AI 포트폴리오 리포트 생성 서비스",
+    title: "polio | 포트폴리오 생성기",
+    description: "AI로 포트폴리오 보고서를 빠르게 생성하고 진행 상태를 실시간으로 확인하세요.",
 };
 
 export default function RootLayout({

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useRef, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
@@ -6,44 +6,44 @@ import { loadPaymentWidget, PaymentWidgetInstance } from "@tosspayments/payment-
 
 export const dynamic = "force-dynamic";
 
-// In a real app, use NEXT_PUBLIC_TOSS_CLIENT_KEY from .env
-// We will fallback to the official Toss test key if env is missing
 const TOSS_CLIENT_KEY = process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY || "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm";
+
+type OrderInfo = {
+    orderId: string;
+    amount: number;
+    orderName: string;
+    customerEmail?: string;
+    customerName?: string;
+};
 
 function CheckoutContent() {
     const searchParams = useSearchParams();
-    const product = searchParams.get("product"); // "PRO_PACK" or "PREMIUM_PACK"
+    const product = searchParams.get("product");
 
     const [paymentWidget, setPaymentWidget] = useState<PaymentWidgetInstance | null>(null);
-    const [orderInfo, setOrderInfo] = useState<any>(null);
+    const [orderInfo, setOrderInfo] = useState<OrderInfo | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    const paymentMethodsWidgetRef = useRef<any>(null);
+    const paymentMethodsWidgetRef = useRef<unknown>(null);
 
     useEffect(() => {
-        if (!product) {
-            setError("No product selected.");
-            setLoading(false);
-            return;
-        }
+        if (!product) return;
 
-        // Initialize Order from our Server
         fetch("/api/orders", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ product })
+            body: JSON.stringify({ product }),
         })
-            .then(res => res.json())
+            .then((res) => res.json())
             .then(async (data) => {
                 if (data.error) throw new Error(data.error);
                 setOrderInfo(data);
 
-                // Initialize Toss Widget
-                const widget = await loadPaymentWidget(TOSS_CLIENT_KEY, "@anonymous"); // using anonymous for simplicity, or customerKey
+                const widget = await loadPaymentWidget(TOSS_CLIENT_KEY, "@anonymous");
                 setPaymentWidget(widget);
             })
-            .catch(err => {
+            .catch((err) => {
                 console.error(err);
                 setError(err.message);
             })
@@ -54,18 +54,13 @@ function CheckoutContent() {
 
     useEffect(() => {
         if (paymentWidget && orderInfo) {
-            // Render Payment Method UI
             const paymentMethodsWidget = paymentWidget.renderPaymentMethods(
                 "#payment-method",
                 { value: orderInfo.amount },
                 { variantKey: "DEFAULT" }
             );
 
-            // Render Agreement UI
-            paymentWidget.renderAgreement(
-                "#agreement",
-                { variantKey: "AGREEMENT" }
-            );
+            paymentWidget.renderAgreement("#agreement", { variantKey: "AGREEMENT" });
 
             paymentMethodsWidgetRef.current = paymentMethodsWidget;
         }
@@ -83,34 +78,51 @@ function CheckoutContent() {
                 customerEmail: orderInfo.customerEmail,
                 customerName: orderInfo.customerName,
             });
-        } catch (err: any) {
-            console.error("Payment failed", err);
-            // handle Toss specific error codes if needed
+        } catch (err: unknown) {
+            console.error("결제 요청 실패", err);
         }
     };
 
-    if (loading) return <div className="p-8 text-center text-gray-500">결제 모듈을 불러오는 중...</div>;
-    if (error) return (
-        <div className="p-8 flex flex-col items-center justify-center min-h-screen bg-gray-50">
-            <div className="bg-white p-8 rounded-lg shadow-md max-w-md w-full text-center">
-                <div className="text-red-500 font-bold mb-4">입력 오류</div>
-                <div className="text-gray-700 mb-6">{error === "No product selected." ? "선택된 상품이 없습니다." : error === "Invalid product" ? "존재하지 않거나 지원하지 않는 상품입니다." : error}</div>
-                <button
-                    onClick={() => window.location.href = '/pricing'}
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded transition-colors"
-                >
-                    요금제로 돌아가기
-                </button>
+    if (!product)
+        return (
+            <div className="flex min-h-screen flex-col items-center justify-center bg-gray-50 p-8">
+                <div className="w-full max-w-md rounded-3xl bg-white p-8 text-center shadow-md">
+                    <div className="mb-4 font-bold text-red-500">입력 오류</div>
+                    <div className="mb-6 text-gray-700">상품이 선택되지 않았습니다.</div>
+                    <button
+                        onClick={() => (window.location.href = "/pricing")}
+                        className="w-full rounded-full bg-blue-600 px-4 py-3 font-bold text-white transition-colors hover:bg-blue-700"
+                    >
+                        요금제로 돌아가기
+                    </button>
+                </div>
             </div>
-        </div>
-    );
+        );
+
+    if (loading) return <div className="p-8 text-center text-gray-500">결제 모듈을 불러오는 중...</div>;
+
+    if (error)
+        return (
+            <div className="flex min-h-screen flex-col items-center justify-center bg-gray-50 p-8">
+                <div className="w-full max-w-md rounded-3xl bg-white p-8 text-center shadow-md">
+                    <div className="mb-4 font-bold text-red-500">입력 오류</div>
+                    <div className="mb-6 text-gray-700">{error}</div>
+                    <button
+                        onClick={() => (window.location.href = "/pricing")}
+                        className="w-full rounded-full bg-blue-600 px-4 py-3 font-bold text-white transition-colors hover:bg-blue-700"
+                    >
+                        요금제로 돌아가기
+                    </button>
+                </div>
+            </div>
+        );
 
     return (
-        <div className="min-h-screen bg-gray-50 flex flex-col items-center py-12 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-md w-full bg-white p-8 rounded-lg shadow">
-                <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">결제하기</h2>
+        <div className="flex min-h-screen flex-col items-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
+            <div className="w-full max-w-md rounded-3xl bg-white p-8 shadow">
+                <h2 className="mb-6 text-center text-2xl font-bold text-gray-900">결제하기</h2>
 
-                <div className="mb-6 p-4 bg-gray-100 rounded-lg flex justify-between items-center">
+                <div className="mb-6 flex items-center justify-between rounded-2xl bg-gray-100 p-4">
                     <span className="font-medium text-gray-700">{orderInfo?.orderName}</span>
                     <span className="text-xl font-bold text-blue-600">₩{orderInfo?.amount.toLocaleString()}</span>
                 </div>
@@ -120,9 +132,9 @@ function CheckoutContent() {
 
                 <button
                     onClick={handlePaymentRequest}
-                    className="mt-6 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded transition-colors"
+                    className="mt-6 w-full rounded-full bg-blue-600 px-4 py-3 font-bold text-white transition-colors hover:bg-blue-700"
                 >
-                    결제하기
+                    결제 진행
                 </button>
             </div>
         </div>

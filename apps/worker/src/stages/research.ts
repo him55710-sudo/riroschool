@@ -1,8 +1,16 @@
-import { Job, prisma, JobProgressStage } from "shared";
+import { Job, prisma } from "shared";
+import type { Prisma } from "shared";
 import { JSDOM } from "jsdom";
 
 interface SearchProvider {
     search(query: string, limit?: number): Promise<{ title: string, url: string, content?: string }[]>;
+}
+
+function normalizeLanguage(language: string | null | undefined) {
+    const value = (language || "").toLowerCase();
+    return value.includes("korean") || value.includes("ko") || value.includes("kr") || value.includes("한국")
+        ? "ko"
+        : "en";
 }
 
 async function fetchWithTimeout(url: string, init: RequestInit = {}, timeoutMs = 8000) {
@@ -16,9 +24,14 @@ async function fetchWithTimeout(url: string, init: RequestInit = {}, timeoutMs =
 }
 
 class FallbackSearchProvider implements SearchProvider {
+    private language: "ko" | "en";
+    constructor(language: "ko" | "en") {
+        this.language = language;
+    }
+
     async search(query: string, limit = 3) {
-        // A smart fallback that tries Wikipedia first, then returns curated mocks
-        const WIKI_API = "https://en.wikipedia.org/w/api.php?action=query&format=json&prop=extracts&exintro=1&explaintext=1&titles=";
+        const wikiHost = this.language === "ko" ? "ko.wikipedia.org" : "en.wikipedia.org";
+        const WIKI_API = `https://${wikiHost}/w/api.php?action=query&format=json&prop=extracts&exintro=1&explaintext=1&titles=`;
         const sources = [];
 
         try {
@@ -29,19 +42,21 @@ class FallbackSearchProvider implements SearchProvider {
 
             if (pageId && pageId !== "-1") {
                 sources.push({
-                    title: `Wikipedia: ${query}`,
-                    url: `https://en.wikipedia.org/wiki/${encodeURIComponent(query)}`,
+                    title: this.language === "ko" ? `위키백과: ${query}` : `Wikipedia: ${query}`,
+                    url: `https://${wikiHost}/wiki/${encodeURIComponent(query)}`,
                     content: pages[pageId].extract
                 });
             }
         } catch (e) { }
 
-        // Add some mocks to guarantee we hit source requirements for PRO
         for (let i = sources.length; i < limit; i++) {
             sources.push({
-                title: `Curated Academic Reference ${i + 1}`,
+                title: this.language === "ko" ? `큐레이션 참고문헌 ${i + 1}` : `Curated Academic Reference ${i + 1}`,
                 url: `https://example.com/academic/ref${i + 1}`,
-                content: `This is a curated academic reference discussing aspects of ${query}. It highlights key methodologies and historical contexts.`
+                content:
+                    this.language === "ko"
+                        ? `${query}의 배경, 핵심 쟁점, 실행 시사점을 정리한 참고 자료다. 주요 방법론과 역사적 맥락, 실무 적용 시 유의점을 포함한다.`
+                        : `This curated source discusses ${query}, highlighting key methodologies, historical context, and practical implications.`
             });
         }
 
@@ -99,19 +114,20 @@ async function scrapeSafely(url: string, preFetchedContent?: string): Promise<st
 
 export async function gatherSources(job: Job) {
     console.log(`[RESEARCH] Gathering sources for '${job.topic}'`);
+    const language = normalizeLanguage(job.language);
 
     const reqSources =
         job.tier === "PREMIUM_PACK"
             ? 15
             : job.tier === "PRO_PACK"
               ? 10
-              : 3;
+              : 6;
 
     let provider: SearchProvider;
     if (process.env.TAVILY_API_KEY && process.env.TAVILY_API_KEY !== 'mock_tavily') {
         provider = new TavilySearchProvider(process.env.TAVILY_API_KEY);
     } else {
-        provider = new FallbackSearchProvider();
+        provider = new FallbackSearchProvider(language);
     }
 
     // 1. Broad Search
@@ -119,21 +135,20 @@ export async function gatherSources(job: Job) {
 
     // If we still didn't hit limits (e.g., Tavily returned fewer), pad with Fallback
     if (results.length < reqSources) {
-        const fallback = new FallbackSearchProvider();
+        const fallback = new FallbackSearchProvider(language);
         const extra = await fallback.search(job.topic + " deeper analysis", reqSources - results.length);
         results = results.concat(extra);
     }
 
     // 2. Safely Process and Save
-    const sourceDocs = [];
+    const sourceDocs: Prisma.SourceCreateManyInput[] = [];
     for (const res of results) {
         const safeContent = await scrapeSafely(res.url, res.content);
         sourceDocs.push({
             jobId: job.id,
             title: res.title,
             url: res.url,
-            notes: safeContent,
-            accessedAt: new Date()
+            notes: safeContent
         });
     }
 

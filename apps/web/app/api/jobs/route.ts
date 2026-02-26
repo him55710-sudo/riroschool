@@ -1,7 +1,11 @@
 import { NextResponse } from "next/server";
-import { prisma, JobCreateSchema, TIER_LIMITS, deductCredits } from "shared";
-import { getServerSession } from "next-auth/next";
-import { getAuthOptions } from "../../../lib/auth";
+import { JobCreateSchema, TIER_LIMITS, deductCredits, prisma } from "shared";
+import {
+    appendGuestJobId,
+    canAccessJob,
+    resolveRequestIdentity,
+    setGuestJobsCookie,
+} from "../../../lib/job-access";
 
 const TIER_COSTS: Record<string, number> = {
     FREE: 0,
@@ -10,6 +14,7 @@ const TIER_COSTS: Record<string, number> = {
 };
 
 const LOCAL_FALLBACK_DELAY_MS = Number(process.env.LOCAL_JOB_FALLBACK_DELAY_MS || "12000");
+const ENABLE_LOCAL_FALLBACK = process.env.ENABLE_LOCAL_JOB_FALLBACK === "1";
 
 const buildLocalFallbackHtml = (topic: string, language: string, tier: string) => {
     const locale = language === "English" ? "en-US" : "ko-KR";
@@ -42,19 +47,19 @@ const buildLocalFallbackHtml = (topic: string, language: string, tier: string) =
     <span class="chip">${tierLabel}</span>
 
     <h2>요약</h2>
-    <p>현재 문서는 로컬 fallback 모드로 생성된 결과입니다. 워커 큐 연결이 없을 때도 확인 가능한 결과를 제공하기 위해 만들어졌습니다.</p>
+    <p>현재 문서는 로컬 fallback 모드로 생성된 결과입니다. 워커가 연결되지 않았을 때도 확인 가능한 결과를 제공하기 위한 임시 문서입니다.</p>
 
     <h2>핵심 내용</h2>
     <ul>
       <li>주제의 배경과 문제 상황을 정리합니다.</li>
-      <li>중요 쟁점과 기대 효과를 구분해서 설명합니다.</li>
-      <li>실행 가능한 다음 단계 제안을 제공합니다.</li>
+      <li>중요 쟁점과 기대 효과를 구분해 설명합니다.</li>
+      <li>실행 가능한 다음 단계를 제안합니다.</li>
     </ul>
 
     <h2>다음 단계</h2>
-    <p>고품질 AI 리포트를 원한다면 worker를 실행하고 GEMINI_API_KEY를 설정한 뒤 다시 생성해 주세요.</p>
+    <p>고품질 AI 보고서를 원하면 worker 실행 상태를 확인한 뒤 다시 생성해 주세요.</p>
 
-    <div class="warn">안내: 이 문서는 장애 대응용 기본 결과이며, 최종 AI 품질 모드와는 다를 수 있습니다.</div>
+    <div class="warn">안내: 이 문서는 비상 대체용 결과이며, 최종 품질 보고서와는 다를 수 있습니다.</div>
   </article>
 </body>
 </html>`;
@@ -77,7 +82,7 @@ async function processLocallyIfStillPending(jobId: string) {
 
     try {
         await prisma.jobLog.create({
-            data: { jobId, stage: "WRITE", message: "워커 fallback이 활성화되어 로컬 리포트를 생성합니다." },
+            data: { jobId, stage: "WRITE", message: "워커 지연으로 로컬 fallback 보고서를 생성합니다." },
         });
 
         const html = buildLocalFallbackHtml(job.topic, job.language, job.tier);
@@ -102,7 +107,7 @@ async function processLocallyIfStillPending(jobId: string) {
         });
 
         await prisma.jobLog.create({
-            data: { jobId, stage: "DONE", message: "로컬 fallback 리포트 생성이 완료되었습니다." },
+            data: { jobId, stage: "DONE", message: "로컬 fallback 보고서 생성이 완료되었습니다." },
         });
     } catch (error: any) {
         await prisma.job.update({
@@ -117,43 +122,61 @@ async function processLocallyIfStillPending(jobId: string) {
 
 function scheduleLocalFallback(jobId: string) {
     if (process.env.NODE_ENV === "production") return;
+    if (!ENABLE_LOCAL_FALLBACK) return;
     setTimeout(() => {
         void processLocallyIfStillPending(jobId);
     }, LOCAL_FALLBACK_DELAY_MS);
 }
 
 export async function POST(req: Request) {
-    try {
-        const session = await getServerSession(getAuthOptions());
-        const userId = session?.user?.id;
+    const identity = await resolveRequestIdentity(req);
+    const userId = identity.userId;
 
+    try {
         const body = await req.json();
         const parsed = JobCreateSchema.parse(body);
         const cost = TIER_COSTS[parsed.tier] || 0;
 
-        if (cost > 0 && !userId) {
-            return NextResponse.json({ error: "유료 플랜은 로그인이 필요합니다." }, { status: 401 });
+        if (!userId && cost > 0) {
+            return NextResponse.json({ error: "유료 플랜은 로그인 후 이용할 수 있습니다." }, { status: 401 });
         }
 
-        if (userId) {
-            const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
-            const existingJob = await prisma.job.findFirst({
-                where: {
-                    userId,
-                    topic: parsed.topic,
-                    tier: parsed.tier,
-                    language: parsed.language,
-                    createdAt: { gte: twentyFourHoursAgo },
-                },
-            });
+        const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
 
-            if (existingJob) {
-                if (existingJob.status === "PENDING") scheduleLocalFallback(existingJob.id);
-                return NextResponse.json(existingJob, { status: 200 });
+        const existingJob = userId
+            ? await prisma.job.findFirst({
+                  where: {
+                      userId,
+                      topic: parsed.topic,
+                      tier: parsed.tier,
+                      language: parsed.language,
+                      createdAt: { gte: twentyFourHoursAgo },
+                  },
+              })
+            : identity.guestJobIds.length > 0
+              ? await prisma.job.findFirst({
+                    where: {
+                        id: { in: identity.guestJobIds },
+                        userId: null,
+                        topic: parsed.topic,
+                        tier: parsed.tier,
+                        language: parsed.language,
+                        createdAt: { gte: twentyFourHoursAgo },
+                    },
+                })
+              : null;
+
+        if (existingJob) {
+            if (existingJob.status === "PENDING") scheduleLocalFallback(existingJob.id);
+
+            const response = NextResponse.json(existingJob, { status: 200 });
+            if (!userId) {
+                setGuestJobsCookie(response, appendGuestJobId(identity.guestJobIds, existingJob.id));
             }
+            return response;
         }
 
-        if (userId && cost > 0) {
+        if (cost > 0 && userId) {
             try {
                 await deductCredits(userId, cost, "JOB_COST");
             } catch (e: any) {
@@ -181,14 +204,19 @@ export async function POST(req: Request) {
         });
 
         scheduleLocalFallback(job.id);
-        return NextResponse.json(job, { status: 201 });
+
+        const response = NextResponse.json(job, { status: 201 });
+        if (!userId) {
+            setGuestJobsCookie(response, appendGuestJobId(identity.guestJobIds, job.id));
+        }
+        return response;
     } catch (error: any) {
         return NextResponse.json({ error: error.message || "작업 생성에 실패했습니다." }, { status: 400 });
     }
 }
 
 export async function GET(req: Request) {
-    const session = await getServerSession(getAuthOptions());
+    const identity = await resolveRequestIdentity(req);
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");
 
@@ -199,14 +227,25 @@ export async function GET(req: Request) {
         });
         if (!job) return NextResponse.json({ error: "작업을 찾을 수 없습니다." }, { status: 404 });
 
-        if (job.userId && job.userId !== session?.user?.id) {
+        if (!canAccessJob(identity, job.id, job.userId)) {
             return NextResponse.json({ error: "접근 권한이 없습니다." }, { status: 403 });
         }
         return NextResponse.json(job);
     }
 
+    let where: Record<string, unknown> = {};
+    if (!identity.isAdmin) {
+        if (identity.userId) {
+            where = { userId: identity.userId };
+        } else if (identity.guestJobIds.length > 0) {
+            where = { id: { in: identity.guestJobIds }, userId: null };
+        } else {
+            return NextResponse.json([]);
+        }
+    }
+
     const jobs = await prisma.job.findMany({
-        where: session?.user?.id ? { userId: session.user.id } : { userId: null },
+        where,
         orderBy: { createdAt: "desc" },
         take: 20,
     });

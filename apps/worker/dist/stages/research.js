@@ -103,8 +103,7 @@ async function gatherSources(job) {
             jobId: job.id,
             title: res.title,
             url: res.url,
-            notes: safeContent,
-            createdAt: new Date() // represents accessedAt essentially
+            notes: safeContent
         });
     }
     await shared_1.prisma.source.createMany({ data: sourceDocs });

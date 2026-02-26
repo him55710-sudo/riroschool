@@ -1,8 +1,12 @@
 import { NextResponse } from 'next/server';
 import { prisma } from 'shared';
 import { v4 as uuidv4 } from 'uuid';
+import { authorizeApi, canAccessOwnedResource } from "../../../../../lib/api-rbac";
 
 export async function POST(req: Request) {
+    const auth = await authorizeApi("payments:confirm");
+    if (!auth.ok) return auth.response;
+
     try {
         const body = await req.json();
         const { paymentKey, orderId, amount } = body;
@@ -18,6 +22,9 @@ export async function POST(req: Request) {
 
         if (!order) {
             return NextResponse.json({ error: "Order not found" }, { status: 404 });
+        }
+        if (!canAccessOwnedResource(auth.context, order.userId)) {
+            return NextResponse.json({ error: "Forbidden" }, { status: 403 });
         }
 
         if (order.status === "PAID") {

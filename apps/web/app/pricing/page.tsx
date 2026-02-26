@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { getServerSession } from "next-auth/next";
 import { getAuthOptions } from "../../lib/auth";
 import { prisma } from "shared";
@@ -6,32 +6,32 @@ import { prisma } from "shared";
 const PLANS = [
     {
         id: "FREE",
-        title: "FREE",
-        subtitle: "빠른 확인용 기본 리포트",
+        title: "무료",
+        subtitle: "가볍게 시작하는 기본 플랜",
         price: "0원",
-        credits: "0크레딧",
-        points: ["1-10쪽", "기본 생성 속도", "가볍게 시작하기 좋음"],
+        credits: "0 크레딧",
+        points: ["1-10쪽 생성", "기본 생성 속도", "서비스 체험용으로 적합"],
         cta: { label: "무료로 시작", href: "/" },
         featured: false,
     },
     {
         id: "PRO_PACK",
-        title: "PRO",
-        subtitle: "균형 잡힌 분량과 품질",
+        title: "프로",
+        subtitle: "충분한 분량과 안정적인 품질",
         price: "3,000원",
-        credits: "3크레딧",
-        points: ["11-20쪽", "참고 자료 강화", "구조 완성도 향상"],
-        cta: { label: "PRO 구매", href: "/checkout?product=PRO_PACK" },
+        credits: "3 크레딧",
+        points: ["11-20쪽 생성", "리서치 밀도 강화", "구조 완성도 향상"],
+        cta: { label: "프로 구매", href: "/checkout?product=PRO_PACK" },
         featured: true,
     },
     {
         id: "PREMIUM_PACK",
-        title: "PREMIUM",
-        subtitle: "심화 분석용 고급 리포트",
+        title: "프리미엄",
+        subtitle: "심화 분석 중심의 고급 리포트",
         price: "5,000원",
-        credits: "5크레딧",
-        points: ["21-30쪽", "가장 깊은 분석", "최종 제출용 추천"],
-        cta: { label: "PREMIUM 구매", href: "/checkout?product=PREMIUM_PACK" },
+        credits: "5 크레딧",
+        points: ["21-30쪽 생성", "고밀도 분석", "제출용 완성도 최적화"],
+        cta: { label: "프리미엄 구매", href: "/checkout?product=PREMIUM_PACK" },
         featured: false,
     },
 ];
@@ -54,18 +54,20 @@ export default async function PricingPage() {
                 <div className="flex flex-wrap items-center justify-between gap-4">
                     <div>
                         <p className="toss-chip">요금제</p>
-                        <h1 className="mt-3 text-3xl font-extrabold text-[var(--toss-ink)] md:text-4xl">나에게 맞는 플랜 선택</h1>
+                        <h1 className="mt-3 text-3xl font-extrabold text-[var(--toss-ink)] md:text-4xl">
+                            필요한 만큼 선택하세요
+                        </h1>
                         <p className="mt-2 text-sm text-[var(--toss-sub)]">
-                            FREE로 시작하고, 더 긴 분량이 필요할 때 PRO/PREMIUM으로 업그레이드하세요.
+                            무료로 시작하고, 더 긴 분량이 필요할 때 프로/프리미엄으로 확장하면 됩니다.
                         </p>
                     </div>
                     {session?.user ? (
-                        <div className="rounded-2xl border border-[var(--toss-line)] bg-[#f8fbff] px-4 py-3 text-sm text-[var(--toss-sub)]">
-                            현재 잔액: <strong className="text-[var(--toss-primary)]">{credits}크레딧</strong>
+                        <div className="rounded-2xl border border-[var(--toss-line)] bg-[#f4f8ff] px-4 py-3 text-sm text-[var(--toss-sub)]">
+                            현재 보유 크레딧: <strong className="text-[var(--toss-primary)]">{credits} 크레딧</strong>
                         </div>
                     ) : (
                         <Link href="/login?next=/pricing" className="toss-secondary-btn inline-flex px-4 py-2 text-sm">
-                            로그인하고 구매
+                            로그인하고 구매하기
                         </Link>
                     )}
                 </div>
@@ -81,7 +83,7 @@ export default async function PricingPage() {
                             key={plan.id}
                             className={`rounded-3xl border p-6 shadow-sm ${
                                 plan.featured
-                                    ? "border-[#b9d5ff] bg-[#f5f9ff]"
+                                    ? "border-[#bdd1ff] bg-[#f2f7ff]"
                                     : "border-[var(--toss-line)] bg-white"
                             }`}
                         >
@@ -103,7 +105,7 @@ export default async function PricingPage() {
 
                             <Link
                                 href={href}
-                                className={`mt-6 inline-flex w-full items-center justify-center rounded-xl px-4 py-3 text-sm font-bold ${
+                                className={`mt-6 inline-flex w-full items-center justify-center rounded-full px-4 py-3 text-sm font-bold ${
                                     plan.featured ? "toss-primary-btn" : "toss-secondary-btn"
                                 }`}
                             >

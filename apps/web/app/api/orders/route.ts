@@ -1,13 +1,10 @@
 import { NextResponse } from 'next/server';
 import { prisma } from 'shared';
-import { getServerSession } from "next-auth/next";
-import { getAuthOptions } from "../../../lib/auth";
+import { authorizeApi } from "../../../lib/api-rbac";
 
 export async function POST(req: Request) {
-    const session = await getServerSession(getAuthOptions());
-    if (!session?.user?.email) {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const auth = await authorizeApi("orders:create");
+    if (!auth.ok) return auth.response;
 
     try {
         const body = await req.json();
@@ -27,7 +24,7 @@ export async function POST(req: Request) {
         }
 
         const user = await prisma.user.findUnique({
-            where: { email: session.user.email }
+            where: { id: auth.context.userId }
         });
 
         if (!user) {

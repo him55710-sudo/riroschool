@@ -1,14 +1,10 @@
 import { NextResponse } from 'next/server';
 import { prisma } from 'shared';
-import { getServerSession } from "next-auth/next";
-import { getAuthOptions } from "../../../../lib/auth";
+import { authorizeApi } from "../../../../lib/api-rbac";
 
-export async function GET(req: Request) {
-    // Basic Auth Check (Ideally, we'd check for a specific admin role or email)
-    const session = await getServerSession(getAuthOptions());
-    if (!session?.user) {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+export async function GET() {
+    const auth = await authorizeApi("admin:config:read");
+    if (!auth.ok) return auth.response;
 
     try {
         let adminConfig = await prisma.adminConfig.findUnique({ where: { id: "singleton" } });
@@ -22,10 +18,8 @@ export async function GET(req: Request) {
 }
 
 export async function PUT(req: Request) {
-    const session = await getServerSession(getAuthOptions());
-    if (!session?.user) {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const auth = await authorizeApi("admin:config:write");
+    if (!auth.ok) return auth.response;
 
     try {
         const body = await req.json();

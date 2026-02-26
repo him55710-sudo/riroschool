@@ -1,3 +1,6 @@
+import fs from "node:fs";
+import path from "node:path";
+import { config as loadEnv } from "dotenv";
 import { createClient } from "redis";
 import { prisma } from "shared";
 import { gatherSources } from "./stages/research";
@@ -6,9 +9,102 @@ import { runQAGate } from "./stages/qa";
 import { formatReport } from "./stages/format";
 import { refundCredits } from "shared/src/credits";
 
+function bootstrapWorkerEnv() {
+    const roots = new Set<string>([
+        process.cwd(),
+        path.resolve(process.cwd(), ".."),
+        path.resolve(process.cwd(), "../.."),
+        path.resolve(__dirname, ".."),
+        path.resolve(__dirname, "../.."),
+        path.resolve(__dirname, "../../.."),
+    ]);
+
+    const candidates: string[] = [];
+    for (const root of roots) {
+        candidates.push(path.join(root, ".env.local"));
+        candidates.push(path.join(root, ".env"));
+    }
+
+    const loaded = new Set<string>();
+    for (const filePath of candidates) {
+        const normalized = path.resolve(filePath);
+        if (loaded.has(normalized) || !fs.existsSync(normalized)) continue;
+        loadEnv({ path: normalized, override: false });
+        loaded.add(normalized);
+    }
+}
+
+bootstrapWorkerEnv();
+
+function resolveRepoRoot() {
+    const candidates = [
+        process.cwd(),
+        path.resolve(process.cwd(), ".."),
+        path.resolve(process.cwd(), "../.."),
+        path.resolve(__dirname, ".."),
+        path.resolve(__dirname, "../.."),
+        path.resolve(__dirname, "../../.."),
+    ];
+
+    for (const candidate of candidates) {
+        if (fs.existsSync(path.join(candidate, "pnpm-workspace.yaml"))) {
+            return candidate;
+        }
+    }
+    return process.cwd();
+}
+
+const repoRoot = resolveRepoRoot();
+const workerPidFilePath = path.join(repoRoot, ".storage", "worker.pid");
+
+function registerWorkerPidFile() {
+    try {
+        fs.mkdirSync(path.dirname(workerPidFilePath), { recursive: true });
+        fs.writeFileSync(
+            workerPidFilePath,
+            JSON.stringify({ pid: process.pid, startedAt: new Date().toISOString() }),
+            "utf8",
+        );
+    } catch (error) {
+        console.warn("[WORKER] Failed to write worker PID file:", error);
+    }
+}
+
+function cleanupWorkerPidFile() {
+    try {
+        if (!fs.existsSync(workerPidFilePath)) return;
+        const raw = fs.readFileSync(workerPidFilePath, "utf8");
+        const parsed = JSON.parse(raw) as { pid?: number };
+        if (parsed.pid === process.pid) {
+            fs.unlinkSync(workerPidFilePath);
+        }
+    } catch {
+        // ignore cleanup errors
+    }
+}
+
+registerWorkerPidFile();
+process.on("exit", cleanupWorkerPidFile);
+process.on("SIGINT", () => {
+    cleanupWorkerPidFile();
+    process.exit(0);
+});
+process.on("SIGTERM", () => {
+    cleanupWorkerPidFile();
+    process.exit(0);
+});
+
 const redisUrl = process.env.REDIS_URL || "";
 const POLL_INTERVAL_MS = Number(process.env.WORKER_POLL_INTERVAL_MS || "4000");
 const processingJobs = new Set<string>();
+
+const ollamaModel = (process.env.OLLAMA_MODEL || "").trim();
+const geminiApiKey = (process.env.GEMINI_API_KEY || "").trim();
+if (!geminiApiKey && !ollamaModel) {
+    console.warn("[WORKER] GEMINI_API_KEY and OLLAMA_MODEL are empty. Report quality will be limited.");
+} else if (!geminiApiKey && ollamaModel) {
+    console.log(`[WORKER] Using Ollama model '${ollamaModel}' for draft generation when needed.`);
+}
 
 async function appendLog(jobId: string, stage: string, message: string) {
     try {

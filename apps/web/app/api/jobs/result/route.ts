@@ -1,10 +1,9 @@
 import { NextResponse } from "next/server";
 import { prisma } from "shared";
-import { getServerSession } from "next-auth/next";
-import { getAuthOptions } from "../../../../lib/auth";
+import { canAccessJob, resolveRequestIdentity } from "../../../../lib/job-access";
 
 export async function GET(req: Request) {
-    const session = await getServerSession(getAuthOptions());
+    const identity = await resolveRequestIdentity(req);
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");
 
@@ -21,7 +20,7 @@ export async function GET(req: Request) {
         return new NextResponse("Job not found", { status: 404 });
     }
 
-    if (job.userId && job.userId !== session?.user?.id) {
+    if (!canAccessJob(identity, job.id, job.userId)) {
         return new NextResponse("Forbidden", { status: 403 });
     }
 

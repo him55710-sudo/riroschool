@@ -1,5 +1,6 @@
 import { getServerSession } from "next-auth/next";
 import { getAuthOptions } from "../../lib/auth";
+import { isAdminEmail } from "../../lib/rbac";
 import { redirect } from "next/navigation";
 import { prisma } from "shared";
 import { AdminControls } from "./AdminControls";
@@ -7,7 +8,10 @@ import { AdminControls } from "./AdminControls";
 export default async function AdminPage() {
     const session = await getServerSession(getAuthOptions());
     if (!session?.user) {
-        redirect("/api/auth/signin");
+        redirect("/login?next=/admin");
+    }
+    if (!isAdminEmail(session.user.email)) {
+        redirect("/");
     }
 
     // Retrieve current configuration

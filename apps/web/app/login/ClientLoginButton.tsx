@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { signIn } from "next-auth/react";
@@ -15,10 +15,10 @@ export function ClientLoginButton({ disabled = false, callbackUrl = "/" }: Clien
     const toFriendlyError = (code: string) => {
         switch (code) {
             case "Configuration":
-                return "Google OAuth 설정이 완전하지 않습니다. .env.local 값을 확인해 주세요.";
+                return "Google OAuth 설정이 올바르지 않습니다. .env.local 값을 확인해 주세요.";
             case "OAuthSignin":
             case "OAuthCallback":
-                return "Google 로그인 과정에서 오류가 발생했습니다. 리디렉션 URI를 확인해 주세요.";
+                return "Google 로그인 과정에서 오류가 발생했습니다. 리다이렉트 URI를 확인해 주세요.";
             case "AccessDenied":
                 return "접근이 거부되었습니다. OAuth 동의 화면과 테스트 사용자 설정을 확인해 주세요.";
             default:
@@ -68,10 +68,10 @@ export function ClientLoginButton({ disabled = false, callbackUrl = "/" }: Clien
             <button
                 onClick={handleSignIn}
                 disabled={disabled || isLoading}
-                className={`inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl border text-sm font-bold transition ${
+                className={`inline-flex h-12 w-full items-center justify-center gap-2 rounded-2xl border text-sm font-bold transition ${
                     disabled || isLoading
                         ? "cursor-not-allowed border-[#e5e8eb] bg-[#f2f4f6] text-[#8b95a1]"
-                        : "border-[#d7e5ff] bg-white text-[#2d79f5] hover:bg-[#f7fbff]"
+                        : "border-[#d6e2ff] bg-white text-[#2f6fff] hover:bg-[#f5f8ff]"
                 }`}
             >
                 <svg className="h-5 w-5" viewBox="0 0 24 24">
@@ -84,7 +84,7 @@ export function ClientLoginButton({ disabled = false, callbackUrl = "/" }: Clien
             </button>
 
             {errorMessage && (
-                <p className="rounded-xl border border-[#ffd9d9] bg-[#fff5f5] px-3 py-2 text-sm text-[var(--toss-danger)]">
+                <p className="rounded-2xl border border-[#ffd9d9] bg-[#fff5f5] px-3 py-2 text-sm text-[var(--toss-danger)]">
                     {errorMessage}
                 </p>
             )}
