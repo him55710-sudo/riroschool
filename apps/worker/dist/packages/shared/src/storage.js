@@ -14,7 +14,7 @@ class LocalStorageAdapter {
             fs_1.default.mkdirSync(this.baseDir, { recursive: true });
         }
     }
-    async uploadFile(jobId, filename, buffer, contentType) {
+    async uploadFile(jobId, filename, buffer, _contentType) {
         const jobDir = path_1.default.join(this.baseDir, jobId);
         if (!fs_1.default.existsSync(jobDir))
             fs_1.default.mkdirSync(jobDir, { recursive: true });
@@ -33,7 +33,7 @@ class LocalStorageAdapter {
 exports.LocalStorageAdapter = LocalStorageAdapter;
 // S3 Stub for later
 class S3CompatibleAdapter {
-    async uploadFile(jobId, filename, buffer, contentType) {
+    async uploadFile(jobId, filename, _buffer, _contentType) {
         console.warn("S3 upload not fully implemented. Stubbing.");
         return `s3://${process.env.STORAGE_BUCKET}/${jobId}/${filename}`;
     }

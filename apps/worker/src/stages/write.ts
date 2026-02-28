@@ -2,6 +2,8 @@ import { Job, prisma } from "shared";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 type LanguageCode = "ko" | "en";
+type OllamaResult = { markdown: string; model: string };
+type GeminiResult = { markdown: string; model: string };
 
 interface SourceDigest {
   index: number;
@@ -476,10 +478,12 @@ async function fetchWithTimeout(url: string, init: RequestInit, timeoutMs: numbe
 
 function buildOllamaPrompt(job: Job, lang: LanguageCode, digests: SourceDigest[]) {
   const targets = TIER_TARGETS[job.tier] || TIER_TARGETS.FREE;
+  const maxSources = job.tier === "PREMIUM_PACK" ? 9 : job.tier === "PRO_PACK" ? 7 : 5;
+  const maxSentencesPerSource = job.tier === "PREMIUM_PACK" ? 3 : 2;
   const sourceBlocks = digests
-    .slice(0, 10)
+    .slice(0, maxSources)
     .map((digest) => {
-      const key = digest.sentences.slice(0, 3).join(" ");
+      const key = digest.sentences.slice(0, maxSentencesPerSource).join(" ");
       return `[${digest.index}] ${digest.title}\nURL: ${digest.url}\n핵심: ${key}`;
     })
     .join("\n\n");
@@ -497,6 +501,7 @@ function buildOllamaPrompt(job: Job, lang: LanguageCode, digests: SourceDigest[]
 - 최소 1개의 표와 1개의 Mermaid 다이어그램을 반드시 포함한다.
 - 단순 요약이 아니라 원인-대안-실행-검증 구조로 쓴다.
 - 실행 로드맵(단기/중기/장기), KPI, 리스크 대응을 포함한다.
+- **[매우 중요] 출처 내용이 빈약하더라도 "내용 없음"이라고 쓰지 말고, 당신의 방대한 내부 지식을 총동원하여 주제에 맞는 가상의 고급 전략, 실무적인 예시, 그리고 구체적인 숫자를 포함한 기대 효과를 창의적으로 지어내어 엄청난 퀄리티의 포트폴리오를 완성해야 한다.**
 
 출처:
 ${sourceBlocks}
@@ -520,55 +525,180 @@ ${sourceBlocks}
 `;
 }
 
-async function generateWithOllama(job: Job, lang: LanguageCode, digests: SourceDigest[]) {
-  const model = (process.env.OLLAMA_MODEL || "").trim();
-  if (!model) return null;
+function parseModelList(raw: string) {
+  return Array.from(
+    new Set(
+      raw
+        .split(",")
+        .map((item) => item.trim())
+        .filter(Boolean),
+    ),
+  );
+}
+
+const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+function getErrorMessage(error: unknown) {
+  if (error instanceof Error && error.message) return error.message;
+  try {
+    return JSON.stringify(error);
+  } catch {
+    return String(error);
+  }
+}
+
+function isQuotaOrRateLimitError(error: unknown) {
+  const message = getErrorMessage(error).toLowerCase();
+  return (
+    message.includes("429") ||
+    message.includes("quota") ||
+    message.includes("too many requests") ||
+    message.includes("rate limit") ||
+    message.includes("resource exhausted")
+  );
+}
+
+function parseRetryDelayMs(error: unknown) {
+  const message = getErrorMessage(error);
+  const match = message.match(/retry in\s*([0-9.]+)s/i);
+  if (!match) return 0;
+
+  const seconds = Number(match[1]);
+  if (!Number.isFinite(seconds) || seconds <= 0) return 0;
+  return Math.min(Math.ceil(seconds * 1000), 30000);
+}
+
+function getGeminiCandidateModels() {
+  const primary = (process.env.GEMINI_WRITE_MODEL || process.env.GEMINI_CHAT_MODEL || "gemini-2.5-flash").trim();
+  const configuredFallback = parseModelList(process.env.GEMINI_WRITE_FALLBACK_MODELS || "");
+  const safetyFallback = ["gemini-2.5-flash"];
+  return parseModelList([primary, ...configuredFallback, ...safetyFallback].join(","));
+}
+
+async function generateWithGemini(prompt: string, geminiApiKey: string): Promise<GeminiResult | null> {
+  const models = getGeminiCandidateModels();
+  if (models.length === 0) return null;
+
+  const genAI = new GoogleGenerativeAI(geminiApiKey);
+  let lastError: unknown = null;
+
+  for (const modelName of models) {
+    const model = genAI.getGenerativeModel({ model: modelName });
+    for (let attempt = 0; attempt < 2; attempt += 1) {
+      try {
+        const result = await model.generateContent(prompt);
+        const markdown = result.response.text().trim();
+        if (!markdown) {
+          throw new Error(`Gemini model '${modelName}' returned an empty draft.`);
+        }
+        return { markdown, model: modelName };
+      } catch (error: unknown) {
+        lastError = error;
+        const retryDelayMs = parseRetryDelayMs(error);
+        if (attempt === 0 && isQuotaOrRateLimitError(error) && retryDelayMs > 0) {
+          console.warn(`[WRITE] Gemini model '${modelName}' quota-limited. Retrying in ${retryDelayMs}ms.`);
+          await wait(retryDelayMs + 300);
+          continue;
+        }
+        console.warn(
+          `[WRITE] Gemini request failed for model '${modelName}' (attempt ${attempt + 1}/2): ${getErrorMessage(error).slice(0, 260)}`,
+        );
+        break;
+      }
+    }
+  }
+
+  if (lastError) {
+    console.warn(`[WRITE] All Gemini models failed: ${getErrorMessage(lastError).slice(0, 260)}`);
+  }
+  return null;
+}
+
+function isGeminiConfigured() {
+  const geminiApiKey = (process.env.GEMINI_API_KEY || "").trim();
+  return geminiApiKey.length > 0 && !geminiApiKey.toLowerCase().includes("your_gemini_api_key_here");
+}
+
+function isOllamaExplicitlyEnabled() {
+  if (process.env.OLLAMA_DISABLED === "1") return false;
+  if ((process.env.OLLAMA_ENABLED || "0").trim() !== "1") return false;
+  return (process.env.OLLAMA_MODEL || "").trim().length > 0;
+}
+
+function getOllamaCandidateModels() {
+  if (!isOllamaExplicitlyEnabled()) return [];
+  const primary = (process.env.OLLAMA_MODEL || "").trim();
+  const configuredFallback = (process.env.OLLAMA_FALLBACK_MODEL || "").trim();
+  const defaultFallback = primary === "qwen2.5:14b" ? "qwen2.5:7b" : "";
+  return parseModelList([primary, configuredFallback || defaultFallback].filter(Boolean).join(","));
+}
+
+function getOllamaNumPredict(job: Job) {
+  const override = Number(process.env.OLLAMA_NUM_PREDICT || "");
+  if (Number.isFinite(override) && override > 0) {
+    return Math.floor(override);
+  }
+
+  if (job.tier === "PREMIUM_PACK") return 6200;
+  if (job.tier === "PRO_PACK") return 4600;
+  return 3200;
+}
+
+async function generateWithOllama(job: Job, lang: LanguageCode, digests: SourceDigest[]): Promise<OllamaResult | null> {
+  const models = getOllamaCandidateModels();
+  if (models.length === 0) return null;
 
   const baseUrl = (process.env.OLLAMA_BASE_URL || "http://127.0.0.1:11434").replace(/\/$/, "");
   const timeoutMs = Number(process.env.OLLAMA_TIMEOUT_MS || "90000");
+  const numPredict = getOllamaNumPredict(job);
   const prompt = buildOllamaPrompt(job, lang, digests);
 
-  try {
-    const response = await fetchWithTimeout(
-      `${baseUrl}/api/generate`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          model,
-          prompt,
-          stream: false,
-          options: {
-            temperature: 0.35,
-            top_p: 0.9,
-            num_predict: 9500,
-          },
-        }),
-      },
-      timeoutMs,
-    );
+  for (const model of models) {
+    try {
+      const response = await fetchWithTimeout(
+        `${baseUrl}/api/generate`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            model,
+            prompt,
+            stream: false,
+            options: {
+              temperature: 0.35,
+              top_p: 0.9,
+              num_predict: numPredict,
+            },
+          }),
+        },
+        timeoutMs,
+      );
 
-    if (!response.ok) {
-      const message = await response.text().catch(() => "");
-      console.warn(`[WRITE] Ollama request failed (${response.status}): ${message.slice(0, 200)}`);
-      return null;
+      if (!response.ok) {
+        const message = await response.text().catch(() => "");
+        console.warn(`[WRITE] Ollama request failed for model '${model}' (${response.status}): ${message.slice(0, 200)}`);
+        continue;
+      }
+
+      const data = (await response.json()) as { response?: string; error?: string };
+      if (data.error) {
+        console.warn(`[WRITE] Ollama error for model '${model}': ${data.error}`);
+        continue;
+      }
+
+      const markdown = data.response?.trim();
+      if (!markdown) {
+        console.warn(`[WRITE] Ollama returned empty response for model '${model}'.`);
+        continue;
+      }
+
+      return { markdown, model };
+    } catch (error: any) {
+      console.warn(`[WRITE] Ollama unavailable for model '${model}': ${error?.message || "unknown error"}`);
     }
-
-    const data = (await response.json()) as { response?: string; error?: string };
-    if (data.error) {
-      console.warn(`[WRITE] Ollama error: ${data.error}`);
-      return null;
-    }
-
-    if (!data.response || !data.response.trim()) {
-      return null;
-    }
-
-    return data.response.trim();
-  } catch (error: any) {
-    console.warn(`[WRITE] Ollama unavailable: ${error?.message || "unknown error"}`);
-    return null;
   }
+
+  return null;
 }
 
 export async function generateDraft(job: Job) {
@@ -606,31 +736,45 @@ export async function generateDraft(job: Job) {
   }
 
   const geminiApiKey = process.env.GEMINI_API_KEY?.trim() || "";
-  const hasGemini = geminiApiKey.length > 0 && !geminiApiKey.toLowerCase().includes("your_gemini_api_key_here");
-  const ollamaEnabled = process.env.OLLAMA_DISABLED !== "1" && (process.env.OLLAMA_MODEL || "").trim().length > 0;
+  const hasGemini = isGeminiConfigured();
+  const ollamaEnabled = isOllamaExplicitlyEnabled();
+  const isPaidTier = job.tier !== "FREE";
   let markdown = "";
   let generationMode: "gemini" | "ollama" | "local" = "local";
+  const digests = buildSourceDigests(sources, job, lang);
+
+  if (!hasGemini && isPaidTier && !ollamaEnabled) {
+    throw new Error("고품질 보고서를 위해 GEMINI_API_KEY 설정이 필요합니다. (.env.local)");
+  }
 
   if (hasGemini) {
-    const genAI = new GoogleGenerativeAI(geminiApiKey);
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-pro" });
-    const result = await model.generateContent(prompt);
-    markdown = result.response.text();
-    generationMode = "gemini";
-  } else if (ollamaEnabled) {
-    const digests = buildSourceDigests(sources, job, lang);
-    console.warn(`[WRITE] GEMINI_API_KEY is missing. Trying Ollama model '${process.env.OLLAMA_MODEL}'.`);
-    const ollamaMarkdown = await generateWithOllama(job, lang, digests);
-    if (ollamaMarkdown) {
-      markdown = ollamaMarkdown;
+    const geminiResult = await generateWithGemini(prompt, geminiApiKey);
+    if (geminiResult) {
+      markdown = geminiResult.markdown;
+      generationMode = "gemini";
+      console.log(`[WRITE] Gemini model selected: '${geminiResult.model}'.`);
+    } else {
+      console.warn("[WRITE] Gemini output unavailable. Falling back to Ollama/local generator.");
+    }
+  }
+
+  if (!markdown && ollamaEnabled) {
+    const candidateModels = getOllamaCandidateModels();
+    console.warn(
+      `[WRITE] Trying Ollama models: ${candidateModels.join(", ") || "(none)"} (num_predict=${getOllamaNumPredict(job)}).`,
+    );
+    const ollamaResult = await generateWithOllama(job, lang, digests);
+    if (ollamaResult) {
+      markdown = ollamaResult.markdown;
       generationMode = "ollama";
+      console.log(`[WRITE] Ollama model selected: '${ollamaResult.model}'.`);
     } else {
       console.warn("[WRITE] Ollama output unavailable. Falling back to advanced local generator.");
-      markdown = buildAdvancedFallbackMarkdown(job, sources);
-      generationMode = "local";
     }
-  } else {
-    console.warn("[WRITE] GEMINI_API_KEY and OLLAMA_MODEL are unavailable. Using advanced local generator.");
+  }
+
+  if (!markdown) {
+    console.warn("[WRITE] Using advanced local generator as final fallback.");
     markdown = buildAdvancedFallbackMarkdown(job, sources);
     generationMode = "local";
   }

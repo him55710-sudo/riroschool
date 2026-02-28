@@ -2,6 +2,7 @@
 
 import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
+import { AlertTriangle } from "lucide-react";
 
 function CheckoutFailContent() {
     const searchParams = useSearchParams();
@@ -10,26 +11,26 @@ function CheckoutFailContent() {
     const orderId = searchParams.get("orderId") || "";
 
     return (
-        <div className="flex min-h-screen flex-col items-center justify-center bg-gray-50 p-4">
-            <div className="w-full max-w-md rounded-3xl bg-white p-8 text-center shadow-md">
-                <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-100">
-                    <svg className="h-8 w-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
-                    </svg>
+        <div className="mx-auto max-w-xl px-4 py-16">
+            <div className="toss-card p-8 text-center">
+                <div className="mx-auto mb-4 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-[#fff1f1] text-[#cc4154]">
+                    <AlertTriangle size={24} />
                 </div>
-                <h1 className="mb-2 text-2xl font-bold text-gray-900">결제에 실패했습니다</h1>
-                <p className="mb-6 text-gray-600">{message}</p>
-                <div className="mb-6 rounded-2xl bg-gray-100 p-4 text-left text-sm">
+                <h1 className="text-3xl font-extrabold">결제에 실패했습니다</h1>
+                <p className="mt-2 text-sm text-[var(--toss-sub)]">{message}</p>
+
+                <div className="mt-6 rounded-2xl border border-[var(--toss-line)] bg-[#f4f8ff] p-4 text-left text-sm text-[var(--toss-sub)]">
                     <p>
-                        <strong>오류 코드:</strong> {code}
+                        <strong className="font-extrabold text-[var(--toss-ink)]">오류 코드:</strong> {code || "정보 없음"}
                     </p>
-                    <p>
-                        <strong>주문 번호:</strong> {orderId}
+                    <p className="mt-1">
+                        <strong className="font-extrabold text-[var(--toss-ink)]">주문 번호:</strong> {orderId || "정보 없음"}
                     </p>
                 </div>
+
                 <button
                     onClick={() => (window.location.href = "/pricing")}
-                    className="w-full rounded-full bg-blue-600 px-4 py-2 font-bold text-white hover:bg-blue-700"
+                    className="toss-secondary-btn mt-6 inline-flex px-4 py-2 text-sm font-bold"
                 >
                     요금제로 돌아가기
                 </button>
@@ -40,7 +41,7 @@ function CheckoutFailContent() {
 
 export default function CheckoutFailPage() {
     return (
-        <Suspense fallback={<div>로딩 중...</div>}>
+        <Suspense fallback={<div className="mx-auto max-w-xl px-4 py-16 text-center text-sm text-[var(--toss-sub)]">로딩 중...</div>}>
             <CheckoutFailContent />
         </Suspense>
     );

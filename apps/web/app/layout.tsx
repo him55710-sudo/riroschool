@@ -1,10 +1,10 @@
 ﻿import type { Metadata } from "next";
-import { Nunito, Noto_Sans_KR } from "next/font/google";
+import { Noto_Sans_KR, Outfit } from "next/font/google";
 import "./globals.css";
 import Providers from "./providers";
 import { Nav } from "./components/Nav";
 
-const heading = Nunito({
+const heading = Outfit({
     subsets: ["latin"],
     variable: "--font-heading",
     weight: ["600", "700", "800"],
@@ -13,7 +13,7 @@ const heading = Nunito({
 const body = Noto_Sans_KR({
     subsets: ["latin"],
     variable: "--font-body",
-    weight: ["400", "500", "700"],
+    weight: ["500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -26,7 +26,7 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
     return (
         <html lang="ko">
-            <body className={`${heading.variable} ${body.variable}`}>
+            <body className={`${heading.variable} ${body.variable} antialiased`}>
                 <Providers>
                     <Nav />
                     {children}

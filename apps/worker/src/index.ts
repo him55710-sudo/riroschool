@@ -98,12 +98,14 @@ const redisUrl = process.env.REDIS_URL || "";
 const POLL_INTERVAL_MS = Number(process.env.WORKER_POLL_INTERVAL_MS || "4000");
 const processingJobs = new Set<string>();
 
-const ollamaModel = (process.env.OLLAMA_MODEL || "").trim();
 const geminiApiKey = (process.env.GEMINI_API_KEY || "").trim();
-if (!geminiApiKey && !ollamaModel) {
-    console.warn("[WORKER] GEMINI_API_KEY and OLLAMA_MODEL are empty. Report quality will be limited.");
-} else if (!geminiApiKey && ollamaModel) {
-    console.log(`[WORKER] Using Ollama model '${ollamaModel}' for draft generation when needed.`);
+const ollamaModel = (process.env.OLLAMA_MODEL || "").trim();
+const ollamaEnabled = process.env.OLLAMA_DISABLED !== "1" && (process.env.OLLAMA_ENABLED || "0").trim() === "1" && ollamaModel;
+
+if (!geminiApiKey && !ollamaEnabled) {
+    console.warn("[WORKER] GEMINI_API_KEY is missing and Ollama fallback is disabled. FREE tier only local generation is available.");
+} else if (!geminiApiKey && ollamaEnabled) {
+    console.log(`[WORKER] GEMINI_API_KEY is missing. Using Ollama model '${ollamaModel}' as fallback.`);
 }
 
 async function appendLog(jobId: string, stage: string, message: string) {

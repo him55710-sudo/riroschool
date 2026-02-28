@@ -1,7 +1,9 @@
 ﻿import Link from "next/link";
 import { getServerSession } from "next-auth/next";
+import { Sparkles, BadgeCheck, Gem } from "lucide-react";
 import { getAuthOptions } from "../../lib/auth";
 import { prisma } from "shared";
+import { isAdminEmail } from "../../lib/rbac";
 
 const PLANS = [
     {
@@ -34,18 +36,32 @@ const PLANS = [
         cta: { label: "프리미엄 구매", href: "/checkout?product=PREMIUM_PACK" },
         featured: false,
     },
-];
+] as const;
 
 export default async function PricingPage() {
     const session = await getServerSession(getAuthOptions());
+    const adminBaseCredits = Number(process.env.ADMIN_BASE_CREDITS || "10000");
 
     let credits = 0;
     if (session?.user?.email) {
         const user = await prisma.user.findUnique({
             where: { email: session.user.email },
-            select: { credits: true },
+            select: { id: true, credits: true, email: true },
         });
-        credits = user?.credits || 0;
+
+        if (user) {
+            const admin = isAdminEmail(user.email || session.user.email);
+            if (admin && Number.isFinite(adminBaseCredits) && adminBaseCredits > 0 && user.credits < adminBaseCredits) {
+                const updated = await prisma.user.update({
+                    where: { id: user.id },
+                    data: { credits: adminBaseCredits },
+                    select: { credits: true },
+                });
+                credits = updated.credits;
+            } else {
+                credits = user.credits;
+            }
+        }
     }
 
     return (
@@ -53,20 +69,20 @@ export default async function PricingPage() {
             <section className="toss-card p-7 md:p-9">
                 <div className="flex flex-wrap items-center justify-between gap-4">
                     <div>
-                        <p className="toss-chip">요금제</p>
-                        <h1 className="mt-3 text-3xl font-extrabold text-[var(--toss-ink)] md:text-4xl">
-                            필요한 만큼 선택하세요
-                        </h1>
-                        <p className="mt-2 text-sm text-[var(--toss-sub)]">
-                            무료로 시작하고, 더 긴 분량이 필요할 때 프로/프리미엄으로 확장하면 됩니다.
+                        <p className="toss-chip">Pricing</p>
+                        <h1 className="mt-3 text-3xl font-extrabold md:text-5xl">프로젝트 규모에 맞춰 유연하게 선택하세요</h1>
+                        <p className="mt-2 max-w-2xl text-sm text-[var(--toss-sub)] md:text-base">
+                            무료로 시작한 뒤, 필요 분량이 커질 때 프로와 프리미엄으로 확장하면 됩니다.
+                            크레딧은 즉시 반영되고 실패 작업에는 복구 로직이 적용됩니다.
                         </p>
                     </div>
+
                     {session?.user ? (
-                        <div className="rounded-2xl border border-[var(--toss-line)] bg-[#f4f8ff] px-4 py-3 text-sm text-[var(--toss-sub)]">
-                            현재 보유 크레딧: <strong className="text-[var(--toss-primary)]">{credits} 크레딧</strong>
+                        <div className="rounded-2xl border border-[var(--toss-line)] bg-[#edf4ff] px-4 py-3 text-sm text-[var(--toss-sub)]">
+                            현재 보유 크레딧: <strong className="font-extrabold text-[var(--toss-primary)]">{credits} 크레딧</strong>
                         </div>
                     ) : (
-                        <Link href="/login?next=/pricing" className="toss-secondary-btn inline-flex px-4 py-2 text-sm">
+                        <Link href="/login?next=/pricing" className="toss-secondary-btn inline-flex px-4 py-2 text-sm font-bold">
                             로그인하고 구매하기
                         </Link>
                     )}
@@ -81,36 +97,47 @@ export default async function PricingPage() {
                     return (
                         <article
                             key={plan.id}
-                            className={`rounded-3xl border p-6 shadow-sm ${
+                            className={`relative overflow-hidden rounded-3xl border p-6 ${
                                 plan.featured
-                                    ? "border-[#bdd1ff] bg-[#f2f7ff]"
-                                    : "border-[var(--toss-line)] bg-white"
+                                    ? "border-[#b8d0ff] bg-gradient-to-b from-[#f1f7ff] to-[#eaf3ff] shadow-[0_16px_32px_rgba(36,99,235,0.18)]"
+                                    : "border-[var(--toss-line)] bg-white/90 shadow-[0_10px_22px_rgba(28,60,125,0.1)]"
                             }`}
                         >
-                            {plan.featured && (
-                                <span className="mb-4 inline-flex rounded-full bg-[var(--toss-primary)] px-3 py-1 text-xs font-bold text-white">
-                                    추천 플랜
-                                </span>
-                            )}
-                            <h2 className="text-xl font-extrabold text-[var(--toss-ink)]">{plan.title}</h2>
-                            <p className="mt-2 text-sm text-[var(--toss-sub)]">{plan.subtitle}</p>
-                            <p className="mt-4 text-2xl font-extrabold text-[var(--toss-ink)]">{plan.price}</p>
-                            <p className="mt-1 text-sm font-semibold text-[var(--toss-primary)]">{plan.credits}</p>
+                            <div className="pointer-events-none absolute -right-14 -top-10 h-28 w-28 rounded-full bg-[#d9ebff]" />
+                            <div className="relative">
+                                {plan.featured ? (
+                                    <span className="mb-4 inline-flex items-center gap-1 rounded-full bg-[var(--toss-primary)] px-3 py-1 text-xs font-extrabold text-white">
+                                        <Sparkles size={13} /> 추천 플랜
+                                    </span>
+                                ) : (
+                                    <span className="mb-4 inline-flex items-center gap-1 rounded-full bg-[#f1f5ff] px-3 py-1 text-xs font-extrabold text-[var(--toss-sub)]">
+                                        {plan.id === "FREE" ? <BadgeCheck size={13} /> : <Gem size={13} />} {plan.id.replace("_", " ")}
+                                    </span>
+                                )}
 
-                            <ul className="mt-5 space-y-2 text-sm text-[var(--toss-sub)]">
-                                {plan.points.map((item) => (
-                                    <li key={item}>- {item}</li>
-                                ))}
-                            </ul>
+                                <h2 className="text-2xl font-extrabold text-[var(--toss-ink)]">{plan.title}</h2>
+                                <p className="mt-2 text-sm text-[var(--toss-sub)]">{plan.subtitle}</p>
+                                <p className="mt-5 text-3xl font-extrabold text-[var(--toss-ink)]">{plan.price}</p>
+                                <p className="mt-1 text-sm font-bold text-[var(--toss-primary)]">{plan.credits}</p>
 
-                            <Link
-                                href={href}
-                                className={`mt-6 inline-flex w-full items-center justify-center rounded-full px-4 py-3 text-sm font-bold ${
-                                    plan.featured ? "toss-primary-btn" : "toss-secondary-btn"
-                                }`}
-                            >
-                                {label}
-                            </Link>
+                                <ul className="mt-5 space-y-2.5 text-sm text-[var(--toss-sub)]">
+                                    {plan.points.map((item) => (
+                                        <li key={item} className="flex items-start gap-2.5 leading-6">
+                                            <span className="mt-2 block h-2 w-2 shrink-0 rounded-full bg-[var(--toss-primary)]" />
+                                            <span className="block">{item}</span>
+                                        </li>
+                                    ))}
+                                </ul>
+
+                                <Link
+                                    href={href}
+                                    className={`mt-6 inline-flex w-full items-center justify-center rounded-full px-4 py-3 text-sm font-extrabold ${
+                                        plan.featured ? "toss-primary-btn" : "toss-secondary-btn"
+                                    }`}
+                                >
+                                    {label}
+                                </Link>
+                            </div>
                         </article>
                     );
                 })}

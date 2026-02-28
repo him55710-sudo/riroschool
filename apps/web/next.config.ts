@@ -11,6 +11,14 @@ loadEnvConfig(workspaceRoot, process.env.NODE_ENV !== "production");
 
 const nextConfig: NextConfig = {
     transpilePackages: ["shared"],
+    images: {
+        remotePatterns: [
+            {
+                protocol: "https",
+                hostname: "lh3.googleusercontent.com",
+            },
+        ],
+    },
 };
 
 export default nextConfig;

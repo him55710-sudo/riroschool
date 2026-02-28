@@ -19,10 +19,10 @@ class MockPaymentProvider {
             orderId: order.id
         };
     }
-    async verifyPayment(providerTxId) {
+    async verifyPayment(_providerTxId) {
         return true; // Auto-pass in mock
     }
-    async handleWebhook(payload, signature) {
+    async handleWebhook(payload, _signature) {
         // Basic mock webhook format: { orderId: '...', status: 'PAID' }
         return {
             orderId: payload.orderId,

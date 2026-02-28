@@ -300,12 +300,14 @@ export async function formatReport(job: Job, draftArtifact: Artifact) {
     },
   });
 
-  try {
-    await generatePdfArtifact(job, fullHtml);
-    console.log(`[FORMAT] PDF document saved for job ${job.id}`);
-  } catch (error: any) {
-    console.warn(`[FORMAT] PDF generation skipped for ${job.id}: ${error?.message || "unknown error"}`);
-  }
+  void generatePdfArtifact(job, fullHtml)
+    .then(() => {
+      console.log(`[FORMAT] PDF document saved for job ${job.id}`);
+    })
+    .catch((error: unknown) => {
+      const message = error instanceof Error ? error.message : "unknown error";
+      console.warn(`[FORMAT] PDF generation skipped for ${job.id}: ${message}`);
+    });
 
   console.log(`[FORMAT] HTML Document saved. ID: ${finalArtifact.id}`);
   return finalArtifact;

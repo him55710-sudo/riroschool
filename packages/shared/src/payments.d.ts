@@ -14,8 +14,8 @@ export declare class MockPaymentProvider implements PaymentProvider {
         checkoutUrl: string;
         orderId: string;
     }>;
-    verifyPayment(providerTxId: string): Promise<boolean>;
-    handleWebhook(payload: any, signature: string): Promise<{
+    verifyPayment(_providerTxId: string): Promise<boolean>;
+    handleWebhook(payload: any, _signature: string): Promise<{
         orderId: any;
         status: any;
     }>;

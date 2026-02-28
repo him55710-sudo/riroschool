@@ -6,7 +6,7 @@ import { isAdminEmail } from "./lib/rbac";
 let warnedInvalidDevAuth = false;
 
 const AUTH_REQUIRED_PAGE_PREFIXES = ["/admin", "/checkout"];
-const PUBLIC_API_PREFIXES = ["/api/auth", "/api/webhooks/toss", "/api/jobs"];
+const PUBLIC_API_PREFIXES = ["/api/auth", "/api/webhooks/toss", "/api/jobs", "/api/chat"];
 const ADMIN_ONLY_PREFIXES = ["/admin", "/api/admin", "/api/webhooks/payment/mock"];
 
 const hasPrefix = (pathname: string, prefix: string) =>

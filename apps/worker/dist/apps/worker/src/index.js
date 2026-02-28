@@ -1,5 +1,11 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+const node_fs_1 = __importDefault(require("node:fs"));
+const node_path_1 = __importDefault(require("node:path"));
+const dotenv_1 = require("dotenv");
 const redis_1 = require("redis");
 const shared_1 = require("shared");
 const research_1 = require("./stages/research");
@@ -7,9 +13,93 @@ const write_1 = require("./stages/write");
 const qa_1 = require("./stages/qa");
 const format_1 = require("./stages/format");
 const credits_1 = require("shared/src/credits");
+function bootstrapWorkerEnv() {
+    const roots = new Set([
+        process.cwd(),
+        node_path_1.default.resolve(process.cwd(), ".."),
+        node_path_1.default.resolve(process.cwd(), "../.."),
+        node_path_1.default.resolve(__dirname, ".."),
+        node_path_1.default.resolve(__dirname, "../.."),
+        node_path_1.default.resolve(__dirname, "../../.."),
+    ]);
+    const candidates = [];
+    for (const root of roots) {
+        candidates.push(node_path_1.default.join(root, ".env.local"));
+        candidates.push(node_path_1.default.join(root, ".env"));
+    }
+    const loaded = new Set();
+    for (const filePath of candidates) {
+        const normalized = node_path_1.default.resolve(filePath);
+        if (loaded.has(normalized) || !node_fs_1.default.existsSync(normalized))
+            continue;
+        (0, dotenv_1.config)({ path: normalized, override: false });
+        loaded.add(normalized);
+    }
+}
+bootstrapWorkerEnv();
+function resolveRepoRoot() {
+    const candidates = [
+        process.cwd(),
+        node_path_1.default.resolve(process.cwd(), ".."),
+        node_path_1.default.resolve(process.cwd(), "../.."),
+        node_path_1.default.resolve(__dirname, ".."),
+        node_path_1.default.resolve(__dirname, "../.."),
+        node_path_1.default.resolve(__dirname, "../../.."),
+    ];
+    for (const candidate of candidates) {
+        if (node_fs_1.default.existsSync(node_path_1.default.join(candidate, "pnpm-workspace.yaml"))) {
+            return candidate;
+        }
+    }
+    return process.cwd();
+}
+const repoRoot = resolveRepoRoot();
+const workerPidFilePath = node_path_1.default.join(repoRoot, ".storage", "worker.pid");
+function registerWorkerPidFile() {
+    try {
+        node_fs_1.default.mkdirSync(node_path_1.default.dirname(workerPidFilePath), { recursive: true });
+        node_fs_1.default.writeFileSync(workerPidFilePath, JSON.stringify({ pid: process.pid, startedAt: new Date().toISOString() }), "utf8");
+    }
+    catch (error) {
+        console.warn("[WORKER] Failed to write worker PID file:", error);
+    }
+}
+function cleanupWorkerPidFile() {
+    try {
+        if (!node_fs_1.default.existsSync(workerPidFilePath))
+            return;
+        const raw = node_fs_1.default.readFileSync(workerPidFilePath, "utf8");
+        const parsed = JSON.parse(raw);
+        if (parsed.pid === process.pid) {
+            node_fs_1.default.unlinkSync(workerPidFilePath);
+        }
+    }
+    catch {
+        // ignore cleanup errors
+    }
+}
+registerWorkerPidFile();
+process.on("exit", cleanupWorkerPidFile);
+process.on("SIGINT", () => {
+    cleanupWorkerPidFile();
+    process.exit(0);
+});
+process.on("SIGTERM", () => {
+    cleanupWorkerPidFile();
+    process.exit(0);
+});
 const redisUrl = process.env.REDIS_URL || "";
 const POLL_INTERVAL_MS = Number(process.env.WORKER_POLL_INTERVAL_MS || "4000");
 const processingJobs = new Set();
+const geminiApiKey = (process.env.GEMINI_API_KEY || "").trim();
+const ollamaModel = (process.env.OLLAMA_MODEL || "").trim();
+const ollamaEnabled = process.env.OLLAMA_DISABLED !== "1" && (process.env.OLLAMA_ENABLED || "0").trim() === "1" && ollamaModel;
+if (!geminiApiKey && !ollamaEnabled) {
+    console.warn("[WORKER] GEMINI_API_KEY is missing and Ollama fallback is disabled. FREE tier only local generation is available.");
+}
+else if (!geminiApiKey && ollamaEnabled) {
+    console.log(`[WORKER] GEMINI_API_KEY is missing. Using Ollama model '${ollamaModel}' as fallback.`);
+}
 async function appendLog(jobId, stage, message) {
     try {
         await shared_1.prisma.jobLog.create({ data: { jobId, stage, message } });

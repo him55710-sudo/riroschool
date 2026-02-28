@@ -5,7 +5,7 @@ import { prisma } from './db';
 export async function deductCredits(userId: string, cost: number, reason: string, jobId?: string): Promise<void> {
     if (cost <= 0) return;
 
-    await prisma.$transaction(async (tx) => {
+    await prisma.$transaction(async (tx: any) => {
         const user = await tx.user.findUnique({ where: { id: userId } });
         if (!user) throw new Error("User not found");
         if (user.credits < cost) throw new Error("Insufficient credits");
@@ -31,7 +31,7 @@ export async function deductCredits(userId: string, cost: number, reason: string
 export async function grantCredits(userId: string, amount: number, reason: string, orderId?: string): Promise<void> {
     if (amount <= 0) return;
 
-    await prisma.$transaction(async (tx) => {
+    await prisma.$transaction(async (tx: any) => {
         // Check for idempotency if an orderId is provided
         if (orderId) {
             const existing = await tx.creditLedger.findFirst({ where: { orderId, reason } });
@@ -59,7 +59,7 @@ export async function grantCredits(userId: string, amount: number, reason: strin
 
 // Used when a JOB fails midway to refund the cost
 export async function refundCredits(jobId: string): Promise<void> {
-    await prisma.$transaction(async (tx) => {
+    await prisma.$transaction(async (tx: any) => {
         // Find the original deduction
         const deduction = await tx.creditLedger.findFirst({
             where: { jobId, reason: 'JOB_COST', delta: { lt: 0 } }

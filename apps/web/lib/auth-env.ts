@@ -36,7 +36,7 @@ export const hasGoogleOAuthCredentials = (
     if (!id || !secret) return false;
     if (isPlaceholderValue(id) || isPlaceholderValue(secret)) return false;
 
-    const clientIdLooksValid = /^[0-9]+-[a-z0-9-]+\.apps\.googleusercontent\.com$/i.test(id);
+    const clientIdLooksValid = id.toLowerCase().endsWith(".apps.googleusercontent.com");
     return clientIdLooksValid && secret.length >= 16;
 };
 

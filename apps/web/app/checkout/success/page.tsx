@@ -3,6 +3,7 @@
 import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { AlertTriangle, CheckCircle2, Clock3, LoaderCircle } from "lucide-react";
 
 function CheckoutSuccessContent() {
     const searchParams = useSearchParams();
@@ -36,27 +37,27 @@ function CheckoutSuccessContent() {
                     setMessage(`알 수 없는 결제 상태: ${body.status}`);
                 }
             })
-            .catch((err) => {
+            .catch((err: unknown) => {
                 setStatus("ERROR");
-                setMessage(err.message);
+                if (err instanceof Error) {
+                    setMessage(err.message);
+                } else {
+                    setMessage("결제 상태 확인 중 오류가 발생했습니다.");
+                }
             });
     }, [hasRequiredParams, paymentKey, orderId, amount]);
 
     if (!hasRequiredParams) {
         return (
-            <div className="flex min-h-screen flex-col items-center justify-center bg-gray-50 p-4">
-                <div className="w-full max-w-md rounded-3xl bg-white p-8 text-center shadow-md">
-                    <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-100">
-                        <svg className="h-8 w-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
-                        </svg>
+            <div className="mx-auto max-w-xl px-4 py-16">
+                <div className="toss-card p-8 text-center">
+                    <div className="mx-auto mb-4 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-[#fff1f1] text-[#cc4154]">
+                        <AlertTriangle size={24} />
                     </div>
-                    <h1 className="mb-2 text-xl font-bold text-red-600">결제 확인 실패</h1>
-                    <p className="mb-6 text-gray-600">결제 확인 파라미터가 올바르지 않습니다.</p>
-                    <Link href="/pricing">
-                        <button className="w-full rounded-full bg-blue-600 px-4 py-2 font-bold text-white hover:bg-blue-700">
-                            요금제로 돌아가기
-                        </button>
+                    <h1 className="text-2xl font-extrabold">결제 확인에 필요한 정보가 없습니다</h1>
+                    <p className="mt-2 text-sm text-[var(--toss-sub)]">요청 파라미터가 올바르지 않아 결제 결과를 확인할 수 없습니다.</p>
+                    <Link href="/pricing" className="toss-secondary-btn mt-6 inline-flex px-4 py-2 text-sm font-bold">
+                        요금제로 돌아가기
                     </Link>
                 </div>
             </div>
@@ -64,63 +65,53 @@ function CheckoutSuccessContent() {
     }
 
     return (
-        <div className="flex min-h-screen flex-col items-center justify-center bg-gray-50 p-4">
-            <div className="w-full max-w-md rounded-3xl bg-white p-8 text-center shadow-md">
+        <div className="mx-auto max-w-xl px-4 py-16">
+            <div className="toss-card p-8 text-center">
                 {status === "LOADING" && (
                     <div>
-                        <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2 border-blue-600"></div>
-                        <h1 className="text-xl font-bold text-gray-900">결제를 확인하는 중입니다...</h1>
-                        <p className="mt-2 text-sm text-gray-500">잠시만 기다려 주세요. 페이지를 닫지 마세요.</p>
+                        <div className="mx-auto mb-4 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-[#eef4ff] text-[var(--toss-primary)]">
+                            <LoaderCircle size={24} className="animate-spin" />
+                        </div>
+                        <h1 className="text-2xl font-extrabold">결제를 확인하는 중입니다</h1>
+                        <p className="mt-2 text-sm text-[var(--toss-sub)]">잠시만 기다려 주세요. 페이지를 닫지 마세요.</p>
                     </div>
                 )}
 
                 {status === "DONE" && (
                     <div>
-                        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
-                            <svg className="h-8 w-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
-                            </svg>
+                        <div className="mx-auto mb-4 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-[#e8f9f0] text-[var(--toss-ok)]">
+                            <CheckCircle2 size={24} />
                         </div>
-                        <h1 className="mb-2 text-2xl font-bold text-gray-900">결제가 완료되었습니다!</h1>
-                        <p className="mb-6 text-gray-600">크레딧이 정상적으로 충전되었습니다.</p>
-                        <Link href="/">
-                            <button className="w-full rounded-full bg-blue-600 px-4 py-2 font-bold text-white hover:bg-blue-700">
-                                홈으로 이동
-                            </button>
+                        <h1 className="text-3xl font-extrabold">결제가 완료되었습니다</h1>
+                        <p className="mt-2 text-sm text-[var(--toss-sub)]">크레딧이 정상적으로 충전되었습니다.</p>
+                        <Link href="/" className="toss-primary-btn mt-6 inline-flex px-4 py-2 text-sm font-extrabold">
+                            홈으로 이동
                         </Link>
                     </div>
                 )}
 
                 {status === "WAITING_FOR_DEPOSIT" && (
                     <div>
-                        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-yellow-100">
-                            <svg className="h-8 w-8 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
+                        <div className="mx-auto mb-4 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-[#fff6e8] text-[var(--toss-warn)]">
+                            <Clock3 size={24} />
                         </div>
-                        <h1 className="mb-2 text-2xl font-bold text-gray-900">입금 대기 중입니다</h1>
-                        <p className="mb-6 text-gray-600">입금이 확인되면 크레딧이 자동으로 충전됩니다.</p>
-                        <Link href="/">
-                            <button className="w-full rounded-full border border-gray-300 px-4 py-2 font-bold text-gray-700 hover:bg-gray-50">
-                                확인
-                            </button>
+                        <h1 className="text-3xl font-extrabold">입금 대기 중입니다</h1>
+                        <p className="mt-2 text-sm text-[var(--toss-sub)]">입금이 확인되면 크레딧이 자동으로 충전됩니다.</p>
+                        <Link href="/" className="toss-secondary-btn mt-6 inline-flex px-4 py-2 text-sm font-bold">
+                            확인
                         </Link>
                     </div>
                 )}
 
                 {status === "ERROR" && (
                     <div>
-                        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-100">
-                            <svg className="h-8 w-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
-                            </svg>
+                        <div className="mx-auto mb-4 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-[#fff1f1] text-[#cc4154]">
+                            <AlertTriangle size={24} />
                         </div>
-                        <h1 className="mb-2 text-xl font-bold text-red-600">결제 확인 실패</h1>
-                        <p className="mb-6 text-gray-600">{message}</p>
-                        <Link href="/pricing">
-                            <button className="w-full rounded-full bg-blue-600 px-4 py-2 font-bold text-white hover:bg-blue-700">
-                                요금제로 돌아가기
-                            </button>
+                        <h1 className="text-2xl font-extrabold">결제 확인 실패</h1>
+                        <p className="mt-2 text-sm text-[var(--toss-sub)]">{message}</p>
+                        <Link href="/pricing" className="toss-secondary-btn mt-6 inline-flex px-4 py-2 text-sm font-bold">
+                            요금제로 돌아가기
                         </Link>
                     </div>
                 )}
@@ -131,7 +122,7 @@ function CheckoutSuccessContent() {
 
 export default function CheckoutSuccessPage() {
     return (
-        <Suspense fallback={<div className="flex min-h-screen items-center justify-center bg-gray-50 p-4">로딩 중...</div>}>
+        <Suspense fallback={<div className="mx-auto max-w-xl px-4 py-16 text-center text-sm text-[var(--toss-sub)]">로딩 중...</div>}>
             <CheckoutSuccessContent />
         </Suspense>
     );

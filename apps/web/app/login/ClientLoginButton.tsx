@@ -33,9 +33,17 @@ export function ClientLoginButton({ disabled = false, callbackUrl = "/" }: Clien
         setErrorMessage("");
 
         try {
-            const result = await signIn("google", { callbackUrl, redirect: false });
+            let result = await signIn("google", { callbackUrl, redirect: false });
+
+            // 개발 서버(Turbopack 등)의 첫 API 구동(콜드 스타트) 시 타임아웃으로 인해 result가 undefined일 수 있습니다.
+            // 2초 정도 대기 후 1회 재시도합니다.
             if (!result) {
-                setErrorMessage("로그인 요청 생성에 실패했습니다.");
+                await new Promise((resolve) => setTimeout(resolve, 2000));
+                result = await signIn("google", { callbackUrl, redirect: false });
+            }
+
+            if (!result) {
+                setErrorMessage("서버 로딩이 지연되고 있습니다. 잠시 후 다시 버튼을 눌러주세요.");
                 return;
             }
 
@@ -68,11 +76,10 @@ export function ClientLoginButton({ disabled = false, callbackUrl = "/" }: Clien
             <button
                 onClick={handleSignIn}
                 disabled={disabled || isLoading}
-                className={`inline-flex h-12 w-full items-center justify-center gap-2 rounded-2xl border text-sm font-bold transition ${
-                    disabled || isLoading
+                className={`inline-flex h-12 w-full items-center justify-center gap-2 rounded-2xl border text-sm font-bold transition ${disabled || isLoading
                         ? "cursor-not-allowed border-[#e5e8eb] bg-[#f2f4f6] text-[#8b95a1]"
                         : "border-[#d6e2ff] bg-white text-[#2f6fff] hover:bg-[#f5f8ff]"
-                }`}
+                    }`}
             >
                 <svg className="h-5 w-5" viewBox="0 0 24 24">
                     <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />

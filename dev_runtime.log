@@ -1,0 +1,763 @@
+
+> riroschool-portfolio-generator@1.0.0 dev C:\Users\임현수\Downloads\리로스쿨 자동화 프로젝트
+> node scripts/dev-orchestrator.mjs
+
+[dev] starting web + worker...
+[web] > web@0.1.0 dev C:\Users\임현수\Downloads\리로스쿨 자동화 프로젝트\apps\web
+[web] > next dev --turbo
+[worker] > worker@1.0.0 dev C:\Users\임현수\Downloads\리로스쿨 자동화 프로젝트\apps\worker
+[worker] > tsx watch src/index.ts
+[web] ▲ Next.js 16.1.6 (Turbopack)
+[web] - Local:         http://localhost:3000
+[web] - Network:       http://192.168.0.140:3000
+[web] - Environments: .env.local, .env
+[web] ✓ Starting...
+[web] Creating turbopack project {
+[web]   dir: 'C:\\Users\\임현수\\Downloads\\리로스쿨 자동화 프로젝트\\apps\\web',
+[web]   testMode: true
+[web] }
+[web] ⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+[web] ✓ Ready in 410.8s
+[worker] [WORKER] REDIS_URL is empty. Running in DB polling mode only.
+[web]  POST /api/chat 200 in 7.4s (compile: 430ms, proxy.ts: 145ms, render: 6.8s)
+[worker] [WORKER] Heartbeat...
+[worker] 오후 11:20:07 [tsx] change in ./..\..\packages\shared\prompts\index.js Restarting...
+[worker] [WORKER] REDIS_URL is empty. Running in DB polling mode only.
+[worker] c[WORKER] Heartbeat...
+[worker] [WORKER] Heartbeat...
+[web] ○ Compiling / ...
+[web]  GET /? 200 in 11.7s (compile: 10.2s, render: 1544ms)
+[web] ○ Compiling /api/auth/[...nextauth] ...
+[web] ⚠ [externals]/@prisma/client
+[web] unexpected export *
+[web] export * used with module [externals]/@prisma/client [external] (@prisma/client, cjs, [project]/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client) which is a CommonJS module with exports only available at runtime
+[web] List all export names manually (`export { a, b, c } from "...") or rewrite the module to ESM, to avoid the additional runtime code.`
+[web] Import trace:
+[web]   external:
+[web]     [externals]/@prisma/client [external]
+[web]     ./packages/shared/src/db.ts [App Route]
+[web]     ./apps/web/lib/auth.ts [App Route]
+[web]     ./apps/web/app/api/auth/[...nextauth]/route.ts [App Route]
+[web]  GET /api/auth/session 200 in 11.4s (compile: 11.0s, proxy.ts: 105ms, render: 281ms)
+[worker] [WORKER] Heartbeat...
+[web] ⚠ [externals]/@prisma/client
+[web] unexpected export *
+[web] export * used with module [externals]/@prisma/client [external] (@prisma/client, cjs, [project]/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client) which is a CommonJS module with exports only available at runtime
+[web] List all export names manually (`export { a, b, c } from "...") or rewrite the module to ESM, to avoid the additional runtime code.`
+[web] Import trace:
+[web]   external:
+[web]     [externals]/@prisma/client [external]
+[web]     ./packages/shared/src/db.ts [App Route]
+[web]     ./apps/web/lib/auth.ts [App Route]
+[web]     ./apps/web/app/api/auth/[...nextauth]/route.ts [App Route]
+[web]  GET / 200 in 691ms (compile: 98ms, render: 594ms)
+[web] ⚠ [externals]/@prisma/client
+[web] unexpected export *
+[web] export * used with module [externals]/@prisma/client [external] (@prisma/client, cjs, [project]/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client) which is a CommonJS module with exports only available at runtime
+[web] List all export names manually (`export { a, b, c } from "...") or rewrite the module to ESM, to avoid the additional runtime code.`
+[web] Import trace:
+[web]   external:
+[web]     [externals]/@prisma/client [external]
+[web]     ./packages/shared/src/db.ts [App Route]
+[web]     ./apps/web/lib/auth.ts [App Route]
+[web]     ./apps/web/app/api/auth/[...nextauth]/route.ts [App Route]
+[web] ⚠ [externals]/@prisma/client
+[web] unexpected export *
+[web] export * used with module [externals]/@prisma/client [external] (@prisma/client, cjs, [project]/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client) which is a CommonJS module with exports only available at runtime
+[web] List all export names manually (`export { a, b, c } from "...") or rewrite the module to ESM, to avoid the additional runtime code.`
+[web] Import trace:
+[web]   external:
+[web]     [externals]/@prisma/client [external]
+[web]     ./packages/shared/src/db.ts [App Route]
+[web]     ./apps/web/lib/auth.ts [App Route]
+[web]     ./apps/web/app/api/auth/[...nextauth]/route.ts [App Route]
+[web]  GET /api/auth/session 200 in 244ms (compile: 112ms, proxy.ts: 45ms, render: 87ms)
+[web] ○ Compiling /pricing ...
+[web] ⚠ [externals]/@prisma/client
+[web] unexpected export *
+[web] export * used with module [externals]/@prisma/client [external] (@prisma/client, cjs, [project]/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client) which is a CommonJS module with exports only available at runtime
+[web] List all export names manually (`export { a, b, c } from "...") or rewrite the module to ESM, to avoid the additional runtime code.`
+[web] Import trace:
+[web]   external:
+[web]     [externals]/@prisma/client [external]
+[web]     ./packages/shared/src/db.ts [Server Component]
+[web]     ./apps/web/app/pricing/page.tsx [Server Component]
+[web]  GET /pricing 200 in 4.8s (compile: 3.9s, render: 913ms)
+[worker] [WORKER] Heartbeat...
+[worker] [WORKER] Heartbeat...
+[worker] [WORKER] Heartbeat...
+[web] ✓ Compiled in 1855ms
+[web] ✓ Compiled in 1632ms
+[web] ⚠ [externals]/@prisma/client
+[web] unexpected export *
+[web] export * used with module [externals]/@prisma/client [external] (@prisma/client, cjs, [project]/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client) which is a CommonJS module with exports only available at runtime
+[web] List all export names manually (`export { a, b, c } from "...") or rewrite the module to ESM, to avoid the additional runtime code.`
+[web] Import trace:
+[web]   external:
+[web]     [externals]/@prisma/client [external]
+[web]     ./packages/shared/src/db.ts [Server Component]
+[web]     ./apps/web/app/pricing/page.tsx [Server Component]
+[web]  GET /pricing 200 in 3.5s (compile: 1677ms, render: 1821ms)
+[web] ✓ Compiled in 137ms
+[worker] [WORKER] Heartbeat...
+[web] ✓ Compiled in 3s
+[web] ⚠ [externals]/@prisma/client
+[web] unexpected export *
+[web] export * used with module [externals]/@prisma/client [external] (@prisma/client, cjs, [project]/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client) which is a CommonJS module with exports only available at runtime
+[web] List all export names manually (`export { a, b, c } from "...") or rewrite the module to ESM, to avoid the additional runtime code.`
+[web] Import trace:
+[web]   external:
+[web]     [externals]/@prisma/client [external]
+[web]     ./packages/shared/src/db.ts [Server Component]
+[web]     ./apps/web/app/pricing/page.tsx [Server Component]
+[web]  GET /pricing 200 in 4.8s (compile: 2.8s, render: 1992ms)
+[worker] [WORKER] Heartbeat...
+[worker] [WORKER] Heartbeat...
+[worker] [WORKER] Heartbeat...
+[worker] [WORKER] Heartbeat...
+[worker] [WORKER] Heartbeat...
+[worker] [WORKER] Heartbeat...
+[worker] [WORKER] Heartbeat...
+[worker] [WORKER] Heartbeat...
+[worker] [WORKER] Heartbeat...
+[worker] [WORKER] Heartbeat...
+[worker] [WORKER] Heartbeat...
+[worker] [WORKER] Heartbeat...
+[worker] [WORKER] Heartbeat...
+[worker] [WORKER] Heartbeat...
+[worker] [WORKER] Heartbeat...
+[web] ⚠ [externals]/@prisma/client
+[web] unexpected export *
+[web] export * used with module [externals]/@prisma/client [external] (@prisma/client, cjs, [project]/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client) which is a CommonJS module with exports only available at runtime
+[web] List all export names manually (`export { a, b, c } from "...") or rewrite the module to ESM, to avoid the additional runtime code.`
+[web] Import trace:
+[web]   external:
+[web]     [externals]/@prisma/client [external]
+[web]     ./packages/shared/src/db.ts [App Route]
+[web]     ./apps/web/lib/auth.ts [App Route]
+[web]     ./apps/web/app/api/auth/[...nextauth]/route.ts [App Route]
+[web]  GET /api/auth/session 200 in 2.1s (compile: 1438ms, proxy.ts: 467ms, render: 208ms)
+[web] ⚠ [externals]/@prisma/client
+[web] unexpected export *
+[web] export * used with module [externals]/@prisma/client [external] (@prisma/client, cjs, [project]/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client) which is a CommonJS module with exports only available at runtime
+[web] List all export names manually (`export { a, b, c } from "...") or rewrite the module to ESM, to avoid the additional runtime code.`
+[web] Import trace:
+[web]   external:
+[web]     [externals]/@prisma/client [external]
+[web]     ./packages/shared/src/db.ts [App Route]
+[web]     ./apps/web/lib/auth.ts [App Route]
+[web]     ./apps/web/app/api/auth/[...nextauth]/route.ts [App Route]
+[web] ⚠ [externals]/@prisma/client
+[web] unexpected export *
+[web] export * used with module [externals]/@prisma/client [external] (@prisma/client, cjs, [project]/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client) which is a CommonJS module with exports only available at runtime
+[web] List all export names manually (`export { a, b, c } from "...") or rewrite the module to ESM, to avoid the additional runtime code.`
+[web] Import trace:
+[web]   external:
+[web]     [externals]/@prisma/client [external]
+[web]     ./packages/shared/src/db.ts [Server Component]
+[web]     ./apps/web/app/pricing/page.tsx [Server Component]
+[web]  GET / 200 in 642ms (compile: 470ms, render: 171ms)
+[worker] [WORKER] Heartbeat...
+[worker] [WORKER] Heartbeat...
+[web] ⚠ [externals]/@prisma/client
+[web] unexpected export *
+[web] export * used with module [externals]/@prisma/client [external] (@prisma/client, cjs, [project]/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client) which is a CommonJS module with exports only available at runtime
+[web] List all export names manually (`export { a, b, c } from "...") or rewrite the module to ESM, to avoid the additional runtime code.`
+[web] Import trace:
+[web]   external:
+[web]     [externals]/@prisma/client [external]
+[web]     ./packages/shared/src/db.ts [App Route]
+[web]     ./apps/web/lib/auth.ts [App Route]
+[web]     ./apps/web/app/api/auth/[...nextauth]/route.ts [App Route]
+[web] ⚠ [externals]/@prisma/client
+[web] unexpected export *
+[web] export * used with module [externals]/@prisma/client [external] (@prisma/client, cjs, [project]/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client) which is a CommonJS module with exports only available at runtime
+[web] List all export names manually (`export { a, b, c } from "...") or rewrite the module to ESM, to avoid the additional runtime code.`
+[web] Import trace:
+[web]   external:
+[web]     [externals]/@prisma/client [external]
+[web]     ./packages/shared/src/db.ts [Server Component]
+[web]     ./apps/web/app/pricing/page.tsx [Server Component]
+[worker] [WORKER] Heartbeat...
+[web]  POST /api/chat 200 in 7.1s (compile: 50ms, proxy.ts: 39ms, render: 7.0s)
+[web] ⚠ [externals]/@prisma/client
+[web] unexpected export *
+[web] export * used with module [externals]/@prisma/client [external] (@prisma/client, cjs, [project]/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client) which is a CommonJS module with exports only available at runtime
+[web] List all export names manually (`export { a, b, c } from "...") or rewrite the module to ESM, to avoid the additional runtime code.`
+[web] Import trace:
+[web]   external:
+[web]     [externals]/@prisma/client [external]
+[web]     ./packages/shared/src/db.ts [App Route]
+[web]     ./apps/web/app/api/jobs/route.ts [App Route]
+[web]  POST /api/jobs 201 in 2.2s (compile: 1893ms, proxy.ts: 27ms, render: 274ms)
+[web] ⚠ [externals]/@prisma/client
+[web] unexpected export *
+[web] export * used with module [externals]/@prisma/client [external] (@prisma/client, cjs, [project]/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client) which is a CommonJS module with exports only available at runtime
+[web] List all export names manually (`export { a, b, c } from "...") or rewrite the module to ESM, to avoid the additional runtime code.`
+[web] Import trace:
+[web]   external:
+[web]     [externals]/@prisma/client [external]
+[web]     ./packages/shared/src/db.ts [App Route]
+[web]     ./apps/web/app/api/jobs/route.ts [App Route]
+[web]  GET /api/jobs?id=cmm6fogdq0001x7kqeln882nn 200 in 202ms (compile: 56ms, proxy.ts: 54ms, render: 92ms)
+[worker] [WORKER] Starting job cmm6fogdq0001x7kqeln882nn - 시대별 건축철학
+[worker] --- Portfolio Chat Context ---
+[worker] assistant: 안녕하세요. 포트폴리오 제작을 도와드릴 AI 에이전트입니다. 목표 직무와 강조할 경험을 먼저 알려주세요.
+[worker] user: 나는 한국사 세특에 쓸 포트폴리오를 제작할 예정이야. 우리나라의 시대별 건축양식의 변화과정들에 대해서 너가 자세히 작성해주면 좋겠어. 약 10페이지 정도의 분량이면 좋겠어.
+[worker] assistant: 좋습니다. 한국사 세특에 활용할 '우리나라 시대별 건축양식의 변화 과정' 포트폴리오 제작을 돕겠습니다. 10페이지 분량은 충분히 심도 있는 내용을 담
+[worker] [RESEARCH] Gathering sources for '시대별 건축철학
+[worker] --- Portfolio Chat Context ---
+[worker] assistant: 안녕하세요. 포트폴리오 제작을 도와드릴 AI 에이전트입니다. 목표 직무와 강조할 경험을 먼저 알려주세요.
+[worker] user: 나는 한국사 세특에 쓸 포트폴리오를 제작할 예정이야. 우리나라의 시대별 건축양식의 변화과정들에 대해서 너가 자세히 작성해주면 좋겠어. 약 10페이지 정도의 분량이면 좋겠어.
+[worker] assistant: 좋습니다. 한국사 세특에 활용할 '우리나라 시대별 건축양식의 변화 과정' 포트폴리오 제작을 돕겠습니다. 10페이지 분량은 충분히 심도 있는 내용을 담'
+[web] ⚠ [externals]/@prisma/client
+[web] unexpected export *
+[web] export * used with module [externals]/@prisma/client [external] (@prisma/client, cjs, [project]/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client) which is a CommonJS module with exports only available at runtime
+[web] List all export names manually (`export { a, b, c } from "...") or rewrite the module to ESM, to avoid the additional runtime code.`
+[web] Import trace:
+[web]   external:
+[web]     [externals]/@prisma/client [external]
+[web]     ./packages/shared/src/db.ts [App Route]
+[web]     ./apps/web/app/api/jobs/route.ts [App Route]
+[web]  GET /api/jobs?id=cmm6fogdq0001x7kqeln882nn 200 in 156ms (compile: 33ms, proxy.ts: 37ms, render: 86ms)
+[worker] [RESEARCH] Saved 5 safe sources.
+[worker] [WRITE] Generating draft for '시대별 건축철학
+[worker] --- Portfolio Chat Context ---
+[worker] assistant: 안녕하세요. 포트폴리오 제작을 도와드릴 AI 에이전트입니다. 목표 직무와 강조할 경험을 먼저 알려주세요.
+[worker] user: 나는 한국사 세특에 쓸 포트폴리오를 제작할 예정이야. 우리나라의 시대별 건축양식의 변화과정들에 대해서 너가 자세히 작성해주면 좋겠어. 약 10페이지 정도의 분량이면 좋겠어.
+[worker] assistant: 좋습니다. 한국사 세특에 활용할 '우리나라 시대별 건축양식의 변화 과정' 포트폴리오 제작을 돕겠습니다. 10페이지 분량은 충분히 심도 있는 내용을 담'
+[worker] [WORKER] Failed job cmm6fogdq0001x7kqeln882nn: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1/models/gemini-2.5-pro:generateContent: [429 Too Many Requests] You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. 
+[worker] * Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 0, model: gemini-2.5-pro
+[worker] * Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 0, model: gemini-2.5-pro
+[worker] * Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_input_token_count, limit: 0, model: gemini-2.5-pro
+[worker] * Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_input_token_count, limit: 0, model: gemini-2.5-pro
+[worker] Please retry in 58.284574562s. [{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Learn more about Gemini API quotas","url":"https://ai.google.dev/gemini-api/docs/rate-limits"}]},{"@type":"type.googleapis.com/google.rpc.QuotaFailure","violations":[{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_requests","quotaId":"GenerateRequestsPerDayPerProjectPerModel-FreeTier","quotaDimensions":{"location":"global","model":"gemini-2.5-pro"}},{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_requests","quotaId":"GenerateRequestsPerMinutePerProjectPerModel-FreeTier","quotaDimensions":{"location":"global","model":"gemini-2.5-pro"}},{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_input_token_count","quotaId":"GenerateContentInputTokensPerModelPerMinute-FreeTier","quotaDimensions":{"location":"global","model":"gemini-2.5-pro"}},{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_input_token_count","quotaId":"GenerateContentInputTokensPerModelPerDay-FreeTier","quotaDimensions":{"location":"global","model":"gemini-2.5-pro"}}]},{"@type":"type.googleapis.com/google.rpc.RetryInfo","retryDelay":"58s"}]
+[web] ⚠ [externals]/@prisma/client
+[web] unexpected export *
+[web] export * used with module [externals]/@prisma/client [external] (@prisma/client, cjs, [project]/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client) which is a CommonJS module with exports only available at runtime
+[web] List all export names manually (`export { a, b, c } from "...") or rewrite the module to ESM, to avoid the additional runtime code.`
+[web] Import trace:
+[web]   external:
+[web]     [externals]/@prisma/client [external]
+[web]     ./packages/shared/src/db.ts [App Route]
+[web]     ./apps/web/app/api/jobs/route.ts [App Route]
+[web]  GET /api/jobs?id=cmm6fogdq0001x7kqeln882nn 200 in 160ms (compile: 33ms, proxy.ts: 33ms, render: 95ms)
+[worker] [WORKER] Heartbeat...
+[web] ⚠ [externals]/@prisma/client
+[web] unexpected export *
+[web] export * used with module [externals]/@prisma/client [external] (@prisma/client, cjs, [project]/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client) which is a CommonJS module with exports only available at runtime
+[web] List all export names manually (`export { a, b, c } from "...") or rewrite the module to ESM, to avoid the additional runtime code.`
+[web] Import trace:
+[web]   external:
+[web]     [externals]/@prisma/client [external]
+[web]     ./packages/shared/src/db.ts [App Route]
+[web]     ./apps/web/lib/auth.ts [App Route]
+[web]     ./apps/web/app/api/auth/[...nextauth]/route.ts [App Route]
+[web]  GET /api/auth/session 200 in 107ms (compile: 54ms, proxy.ts: 17ms, render: 36ms)
+[worker] [WORKER] Heartbeat...
+[web] ⚠ [externals]/@prisma/client
+[web] unexpected export *
+[web] export * used with module [externals]/@prisma/client [external] (@prisma/client, cjs, [project]/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client) which is a CommonJS module with exports only available at runtime
+[web] List all export names manually (`export { a, b, c } from "...") or rewrite the module to ESM, to avoid the additional runtime code.`
+[web] Import trace:
+[web]   external:
+[web]     [externals]/@prisma/client [external]
+[web]     ./packages/shared/src/db.ts [App Route]
+[web]     ./apps/web/lib/auth.ts [App Route]
+[web]     ./apps/web/app/api/auth/[...nextauth]/route.ts [App Route]
+[web]  GET /api/auth/session 200 in 112ms (compile: 51ms, proxy.ts: 21ms, render: 39ms)
+[worker] [WORKER] Heartbeat...
+[worker] [WORKER] Heartbeat...
+[web]   Reload env: .env.local
+[web] ⚠ [externals]/@prisma/client
+[web] unexpected export *
+[web] export * used with module [externals]/@prisma/client [external] (@prisma/client, cjs, [project]/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client) which is a CommonJS module with exports only available at runtime
+[web] List all export names manually (`export { a, b, c } from "...") or rewrite the module to ESM, to avoid the additional runtime code.`
+[web] Import trace:
+[web]   external:
+[web]     [externals]/@prisma/client [external]
+[web]     ./packages/shared/src/db.ts [App Route]
+[web]     ./apps/web/lib/auth.ts [App Route]
+[web]     ./apps/web/app/api/auth/[...nextauth]/route.ts [App Route]
+[web] ⚠ [externals]/@prisma/client
+[web] unexpected export *
+[web] export * used with module [externals]/@prisma/client [external] (@prisma/client, cjs, [project]/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client) which is a CommonJS module with exports only available at runtime
+[web] List all export names manually (`export { a, b, c } from "...") or rewrite the module to ESM, to avoid the additional runtime code.`
+[web] Import trace:
+[web]   external:
+[web]     [externals]/@prisma/client [external]
+[web]     ./packages/shared/src/db.ts [Server Component]
+[web]     ./apps/web/app/pricing/page.tsx [Server Component]
+[web] ⚠ [externals]/@prisma/client
+[web] unexpected export *
+[web] export * used with module [externals]/@prisma/client [external] (@prisma/client, cjs, [project]/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client) which is a CommonJS module with exports only available at runtime
+[web] List all export names manually (`export { a, b, c } from "...") or rewrite the module to ESM, to avoid the additional runtime code.`
+[web] Import trace:
+[web]   external:
+[web]     [externals]/@prisma/client [external]
+[web]     ./packages/shared/src/db.ts [App Route]
+[web]     ./apps/web/app/api/jobs/route.ts [App Route]
+[web] ✓ Compiled in 0ms
+[web]  GET / 200 in 474ms (compile: 350ms, render: 125ms)
+[worker] [WORKER] Heartbeat...
+[worker] [WORKER] Heartbeat...
+[web] ⚠ [externals]/@prisma/client
+[web] unexpected export *
+[web] export * used with module [externals]/@prisma/client [external] (@prisma/client, cjs, [project]/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client) which is a CommonJS module with exports only available at runtime
+[web] List all export names manually (`export { a, b, c } from "...") or rewrite the module to ESM, to avoid the additional runtime code.`
+[web] Import trace:
+[web]   external:
+[web]     [externals]/@prisma/client [external]
+[web]     ./packages/shared/src/db.ts [App Route]
+[web]     ./apps/web/lib/auth.ts [App Route]
+[web]     ./apps/web/app/api/auth/[...nextauth]/route.ts [App Route]
+[web] ⚠ [externals]/@prisma/client
+[web] unexpected export *
+[web] export * used with module [externals]/@prisma/client [external] (@prisma/client, cjs, [project]/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client) which is a CommonJS module with exports only available at runtime
+[web] List all export names manually (`export { a, b, c } from "...") or rewrite the module to ESM, to avoid the additional runtime code.`
+[web] Import trace:
+[web]   external:
+[web]     [externals]/@prisma/client [external]
+[web]     ./packages/shared/src/db.ts [Server Component]
+[web]     ./apps/web/app/pricing/page.tsx [Server Component]
+[web] ⚠ [externals]/@prisma/client
+[web] unexpected export *
+[web] export * used with module [externals]/@prisma/client [external] (@prisma/client, cjs, [project]/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client) which is a CommonJS module with exports only available at runtime
+[web] List all export names manually (`export { a, b, c } from "...") or rewrite the module to ESM, to avoid the additional runtime code.`
+[web] Import trace:
+[web]   external:
+[web]     [externals]/@prisma/client [external]
+[web]     ./packages/shared/src/db.ts [App Route]
+[web]     ./apps/web/app/api/jobs/route.ts [App Route]
+[web]  POST /api/chat 200 in 18.4s (compile: 247ms, proxy.ts: 60ms, render: 18.0s)
+[worker] [WORKER] Heartbeat...
+[worker] [WORKER] Heartbeat...
+[web]   Reload env: .env.local
+[worker] [WORKER] Heartbeat...
+[web] ⚠ [externals]/@prisma/client
+[web] unexpected export *
+[web] export * used with module [externals]/@prisma/client [external] (@prisma/client, cjs, [project]/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client) which is a CommonJS module with exports only available at runtime
+[web] List all export names manually (`export { a, b, c } from "...") or rewrite the module to ESM, to avoid the additional runtime code.`
+[web] Import trace:
+[web]   external:
+[web]     [externals]/@prisma/client [external]
+[web]     ./packages/shared/src/db.ts [App Route]
+[web]     ./apps/web/lib/auth.ts [App Route]
+[web]     ./apps/web/app/api/auth/[...nextauth]/route.ts [App Route]
+[web] ⚠ [externals]/@prisma/client
+[web] unexpected export *
+[web] export * used with module [externals]/@prisma/client [external] (@prisma/client, cjs, [project]/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client) which is a CommonJS module with exports only available at runtime
+[web] List all export names manually (`export { a, b, c } from "...") or rewrite the module to ESM, to avoid the additional runtime code.`
+[web] Import trace:
+[web]   external:
+[web]     [externals]/@prisma/client [external]
+[web]     ./packages/shared/src/db.ts [Server Component]
+[web]     ./apps/web/app/pricing/page.tsx [Server Component]
+[web] ⚠ [externals]/@prisma/client
+[web] unexpected export *
+[web] export * used with module [externals]/@prisma/client [external] (@prisma/client, cjs, [project]/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client) which is a CommonJS module with exports only available at runtime
+[web] List all export names manually (`export { a, b, c } from "...") or rewrite the module to ESM, to avoid the additional runtime code.`
+[web] Import trace:
+[web]   external:
+[web]     [externals]/@prisma/client [external]
+[web]     ./packages/shared/src/db.ts [App Route]
+[web]     ./apps/web/app/api/jobs/route.ts [App Route]
+[web]  POST /api/chat 200 in 13.1s (compile: 171ms, proxy.ts: 46ms, render: 12.9s)
+[web] ⚠ [externals]/@prisma/client
+[web] unexpected export *
+[web] export * used with module [externals]/@prisma/client [external] (@prisma/client, cjs, [project]/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client) which is a CommonJS module with exports only available at runtime
+[web] List all export names manually (`export { a, b, c } from "...") or rewrite the module to ESM, to avoid the additional runtime code.`
+[web] Import trace:
+[web]   external:
+[web]     [externals]/@prisma/client [external]
+[web]     ./packages/shared/src/db.ts [App Route]
+[web]     ./apps/web/lib/auth.ts [App Route]
+[web]     ./apps/web/app/api/auth/[...nextauth]/route.ts [App Route]
+[web] ⚠ [externals]/@prisma/client
+[web] unexpected export *
+[web] export * used with module [externals]/@prisma/client [external] (@prisma/client, cjs, [project]/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client) which is a CommonJS module with exports only available at runtime
+[web] List all export names manually (`export { a, b, c } from "...") or rewrite the module to ESM, to avoid the additional runtime code.`
+[web] Import trace:
+[web]   external:
+[web]     [externals]/@prisma/client [external]
+[web]     ./packages/shared/src/db.ts [Server Component]
+[web]     ./apps/web/app/pricing/page.tsx [Server Component]
+[web] ⚠ [externals]/@prisma/client
+[web] unexpected export *
+[web] export * used with module [externals]/@prisma/client [external] (@prisma/client, cjs, [project]/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client) which is a CommonJS module with exports only available at runtime
+[web] List all export names manually (`export { a, b, c } from "...") or rewrite the module to ESM, to avoid the additional runtime code.`
+[web] Import trace:
+[web]   external:
+[web]     [externals]/@prisma/client [external]
+[web]     ./packages/shared/src/db.ts [App Route]
+[web]     ./apps/web/app/api/jobs/route.ts [App Route]
+[web]  POST /api/chat 500 in 31ms (compile: 9ms, proxy.ts: 10ms, render: 12ms)
+[web] ⚠ [externals]/@prisma/client
+[web] unexpected export *
+[web] export * used with module [externals]/@prisma/client [external] (@prisma/client, cjs, [project]/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client) which is a CommonJS module with exports only available at runtime
+[web] List all export names manually (`export { a, b, c } from "...") or rewrite the module to ESM, to avoid the additional runtime code.`
+[web] Import trace:
+[web]   external:
+[web]     [externals]/@prisma/client [external]
+[web]     ./packages/shared/src/db.ts [App Route]
+[web]     ./apps/web/lib/auth.ts [App Route]
+[web]     ./apps/web/app/api/auth/[...nextauth]/route.ts [App Route]
+[web] ⚠ [externals]/@prisma/client
+[web] unexpected export *
+[web] export * used with module [externals]/@prisma/client [external] (@prisma/client, cjs, [project]/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client) which is a CommonJS module with exports only available at runtime
+[web] List all export names manually (`export { a, b, c } from "...") or rewrite the module to ESM, to avoid the additional runtime code.`
+[web] Import trace:
+[web]   external:
+[web]     [externals]/@prisma/client [external]
+[web]     ./packages/shared/src/db.ts [Server Component]
+[web]     ./apps/web/app/pricing/page.tsx [Server Component]
+[web] ⚠ [externals]/@prisma/client
+[web] unexpected export *
+[web] export * used with module [externals]/@prisma/client [external] (@prisma/client, cjs, [project]/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client) which is a CommonJS module with exports only available at runtime
+[web] List all export names manually (`export { a, b, c } from "...") or rewrite the module to ESM, to avoid the additional runtime code.`
+[web] Import trace:
+[web]   external:
+[web]     [externals]/@prisma/client [external]
+[web]     ./packages/shared/src/db.ts [App Route]
+[web]     ./apps/web/app/api/jobs/route.ts [App Route]
+[worker] [WORKER] Heartbeat...
+[web]  POST /api/chat 200 in 49s (compile: 29ms, proxy.ts: 17ms, render: 49s)
+[worker] [WORKER] Heartbeat...
+[worker] [WORKER] Heartbeat...
+[worker] [WORKER] Heartbeat...
+[web] ⚠ [externals]/@prisma/client
+[web] unexpected export *
+[web] export * used with module [externals]/@prisma/client [external] (@prisma/client, cjs, [project]/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client) which is a CommonJS module with exports only available at runtime
+[web] List all export names manually (`export { a, b, c } from "...") or rewrite the module to ESM, to avoid the additional runtime code.`
+[web] Import trace:
+[web]   external:
+[web]     [externals]/@prisma/client [external]
+[web]     ./packages/shared/src/db.ts [App Route]
+[web]     ./apps/web/lib/auth.ts [App Route]
+[web]     ./apps/web/app/api/auth/[...nextauth]/route.ts [App Route]
+[web] ⚠ [externals]/@prisma/client
+[web] unexpected export *
+[web] export * used with module [externals]/@prisma/client [external] (@prisma/client, cjs, [project]/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client) which is a CommonJS module with exports only available at runtime
+[web] List all export names manually (`export { a, b, c } from "...") or rewrite the module to ESM, to avoid the additional runtime code.`
+[web] Import trace:
+[web]   external:
+[web]     [externals]/@prisma/client [external]
+[web]     ./packages/shared/src/db.ts [Server Component]
+[web]     ./apps/web/app/pricing/page.tsx [Server Component]
+[web] ⚠ [externals]/@prisma/client
+[web] unexpected export *
+[web] export * used with module [externals]/@prisma/client [external] (@prisma/client, cjs, [project]/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client) which is a CommonJS module with exports only available at runtime
+[web] List all export names manually (`export { a, b, c } from "...") or rewrite the module to ESM, to avoid the additional runtime code.`
+[web] Import trace:
+[web]   external:
+[web]     [externals]/@prisma/client [external]
+[web]     ./packages/shared/src/db.ts [App Route]
+[web]     ./apps/web/app/api/jobs/route.ts [App Route]
+[web]  POST /api/chat 200 in 52s (compile: 141ms, proxy.ts: 5ms, render: 52s)
+[worker] [WORKER] Heartbeat...
+[worker] [WORKER] Heartbeat...
+[worker] [WORKER] Heartbeat...
+[worker] [WORKER] Heartbeat...
+[worker] [WORKER] Heartbeat...
+[worker] [WORKER] Heartbeat...
+[worker] [WORKER] Heartbeat...
+[worker] [WORKER] Heartbeat...
+[worker] [WORKER] Heartbeat...
+[worker] [WORKER] Heartbeat...
+[worker] [WORKER] Heartbeat...
+[worker] [WORKER] Heartbeat...
+[worker] [WORKER] Heartbeat...
+[web] ⚠ [externals]/@prisma/client
+[web] unexpected export *
+[web] export * used with module [externals]/@prisma/client [external] (@prisma/client, cjs, [project]/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client) which is a CommonJS module with exports only available at runtime
+[web] List all export names manually (`export { a, b, c } from "...") or rewrite the module to ESM, to avoid the additional runtime code.`
+[web] Import trace:
+[web]   external:
+[web]     [externals]/@prisma/client [external]
+[web]     ./packages/shared/src/db.ts [App Route]
+[web]     ./apps/web/lib/auth.ts [App Route]
+[web]     ./apps/web/app/api/auth/[...nextauth]/route.ts [App Route]
+[web] ⚠ [externals]/@prisma/client
+[web] unexpected export *
+[web] export * used with module [externals]/@prisma/client [external] (@prisma/client, cjs, [project]/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client) which is a CommonJS module with exports only available at runtime
+[web] List all export names manually (`export { a, b, c } from "...") or rewrite the module to ESM, to avoid the additional runtime code.`
+[web] Import trace:
+[web]   external:
+[web]     [externals]/@prisma/client [external]
+[web]     ./packages/shared/src/db.ts [Server Component]
+[web]     ./apps/web/app/pricing/page.tsx [Server Component]
+[web] ⚠ [externals]/@prisma/client
+[web] unexpected export *
+[web] export * used with module [externals]/@prisma/client [external] (@prisma/client, cjs, [project]/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client) which is a CommonJS module with exports only available at runtime
+[web] List all export names manually (`export { a, b, c } from "...") or rewrite the module to ESM, to avoid the additional runtime code.`
+[web] Import trace:
+[web]   external:
+[web]     [externals]/@prisma/client [external]
+[web]     ./packages/shared/src/db.ts [App Route]
+[web]     ./apps/web/app/api/jobs/route.ts [App Route]
+[web] ⚠ [externals]/@prisma/client
+[web] unexpected export *
+[web] export * used with module [externals]/@prisma/client [external] (@prisma/client, cjs, [project]/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client) which is a CommonJS module with exports only available at runtime
+[web] List all export names manually (`export { a, b, c } from "...") or rewrite the module to ESM, to avoid the additional runtime code.`
+[web] Import trace:
+[web]   external:
+[web]     [externals]/@prisma/client [external]
+[web]     ./packages/shared/src/db.ts [App Route]
+[web]     ./apps/web/lib/auth.ts [App Route]
+[web]     ./apps/web/app/api/auth/[...nextauth]/route.ts [App Route]
+[web] ⚠ [externals]/@prisma/client
+[web] unexpected export *
+[web] export * used with module [externals]/@prisma/client [external] (@prisma/client, cjs, [project]/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client) which is a CommonJS module with exports only available at runtime
+[web] List all export names manually (`export { a, b, c } from "...") or rewrite the module to ESM, to avoid the additional runtime code.`
+[web] Import trace:
+[web]   external:
+[web]     [externals]/@prisma/client [external]
+[web]     ./packages/shared/src/db.ts [Server Component]
+[web]     ./apps/web/app/pricing/page.tsx [Server Component]
+[web] ⚠ [externals]/@prisma/client
+[web] unexpected export *
+[web] export * used with module [externals]/@prisma/client [external] (@prisma/client, cjs, [project]/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client) which is a CommonJS module with exports only available at runtime
+[web] List all export names manually (`export { a, b, c } from "...") or rewrite the module to ESM, to avoid the additional runtime code.`
+[web] Import trace:
+[web]   external:
+[web]     [externals]/@prisma/client [external]
+[web]     ./packages/shared/src/db.ts [App Route]
+[web]     ./apps/web/app/api/jobs/route.ts [App Route]
+[web] ⚠ [externals]/@prisma/client
+[web] unexpected export *
+[web] export * used with module [externals]/@prisma/client [external] (@prisma/client, cjs, [project]/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client) which is a CommonJS module with exports only available at runtime
+[web] List all export names manually (`export { a, b, c } from "...") or rewrite the module to ESM, to avoid the additional runtime code.`
+[web] Import trace:
+[web]   external:
+[web]     [externals]/@prisma/client [external]
+[web]     ./packages/shared/src/db.ts [App Route]
+[web]     ./apps/web/lib/auth.ts [App Route]
+[web]     ./apps/web/app/api/auth/[...nextauth]/route.ts [App Route]
+[web]  GET /api/auth/session 200 in 1592ms (compile: 1463ms, proxy.ts: 20ms, render: 109ms)
+[web]  GET / 200 in 1576ms (compile: 488ms, render: 1088ms)
+[web] ⚠ [externals]/@prisma/client
+[web] unexpected export *
+[web] export * used with module [externals]/@prisma/client [external] (@prisma/client, cjs, [project]/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client) which is a CommonJS module with exports only available at runtime
+[web] List all export names manually (`export { a, b, c } from "...") or rewrite the module to ESM, to avoid the additional runtime code.`
+[web] Import trace:
+[web]   external:
+[web]     [externals]/@prisma/client [external]
+[web]     ./packages/shared/src/db.ts [App Route]
+[web]     ./apps/web/lib/auth.ts [App Route]
+[web]     ./apps/web/app/api/auth/[...nextauth]/route.ts [App Route]
+[web] ⚠ [externals]/@prisma/client
+[web] unexpected export *
+[web] export * used with module [externals]/@prisma/client [external] (@prisma/client, cjs, [project]/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client) which is a CommonJS module with exports only available at runtime
+[web] List all export names manually (`export { a, b, c } from "...") or rewrite the module to ESM, to avoid the additional runtime code.`
+[web] Import trace:
+[web]   external:
+[web]     [externals]/@prisma/client [external]
+[web]     ./packages/shared/src/db.ts [Server Component]
+[web]     ./apps/web/app/pricing/page.tsx [Server Component]
+[web] ⚠ [externals]/@prisma/client
+[web] unexpected export *
+[web] export * used with module [externals]/@prisma/client [external] (@prisma/client, cjs, [project]/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client) which is a CommonJS module with exports only available at runtime
+[web] List all export names manually (`export { a, b, c } from "...") or rewrite the module to ESM, to avoid the additional runtime code.`
+[web] Import trace:
+[web]   external:
+[web]     [externals]/@prisma/client [external]
+[web]     ./packages/shared/src/db.ts [App Route]
+[web]     ./apps/web/app/api/jobs/route.ts [App Route]
+[web]  GET / 200 in 1208ms (compile: 19ms, render: 1189ms)
+[web] ⚠ [externals]/@prisma/client
+[web] unexpected export *
+[web] export * used with module [externals]/@prisma/client [external] (@prisma/client, cjs, [project]/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client) which is a CommonJS module with exports only available at runtime
+[web] List all export names manually (`export { a, b, c } from "...") or rewrite the module to ESM, to avoid the additional runtime code.`
+[web] Import trace:
+[web]   external:
+[web]     [externals]/@prisma/client [external]
+[web]     ./packages/shared/src/db.ts [App Route]
+[web]     ./apps/web/lib/auth.ts [App Route]
+[web]     ./apps/web/app/api/auth/[...nextauth]/route.ts [App Route]
+[web] ⚠ [externals]/@prisma/client
+[web] unexpected export *
+[web] export * used with module [externals]/@prisma/client [external] (@prisma/client, cjs, [project]/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client) which is a CommonJS module with exports only available at runtime
+[web] List all export names manually (`export { a, b, c } from "...") or rewrite the module to ESM, to avoid the additional runtime code.`
+[web] Import trace:
+[web]   external:
+[web]     [externals]/@prisma/client [external]
+[web]     ./packages/shared/src/db.ts [Server Component]
+[web]     ./apps/web/app/pricing/page.tsx [Server Component]
+[web] ⚠ [externals]/@prisma/client
+[web] unexpected export *
+[web] export * used with module [externals]/@prisma/client [external] (@prisma/client, cjs, [project]/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client) which is a CommonJS module with exports only available at runtime
+[web] List all export names manually (`export { a, b, c } from "...") or rewrite the module to ESM, to avoid the additional runtime code.`
+[web] Import trace:
+[web]   external:
+[web]     [externals]/@prisma/client [external]
+[web]     ./packages/shared/src/db.ts [App Route]
+[web]     ./apps/web/app/api/jobs/route.ts [App Route]
+[web] ⚠ [externals]/@prisma/client
+[web] unexpected export *
+[web] export * used with module [externals]/@prisma/client [external] (@prisma/client, cjs, [project]/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client) which is a CommonJS module with exports only available at runtime
+[web] List all export names manually (`export { a, b, c } from "...") or rewrite the module to ESM, to avoid the additional runtime code.`
+[web] Import trace:
+[web]   external:
+[web]     [externals]/@prisma/client [external]
+[web]     ./packages/shared/src/db.ts [App Route]
+[web]     ./apps/web/lib/auth.ts [App Route]
+[web]     ./apps/web/app/api/auth/[...nextauth]/route.ts [App Route]
+[web]  GET /api/auth/session 200 in 144ms (compile: 55ms, proxy.ts: 22ms, render: 66ms)
+[worker] [WORKER] Heartbeat...
+[worker] [WORKER] Heartbeat...
+[web] ⚠ [externals]/@prisma/client
+[web] unexpected export *
+[web] export * used with module [externals]/@prisma/client [external] (@prisma/client, cjs, [project]/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client) which is a CommonJS module with exports only available at runtime
+[web] List all export names manually (`export { a, b, c } from "...") or rewrite the module to ESM, to avoid the additional runtime code.`
+[web] Import trace:
+[web]   external:
+[web]     [externals]/@prisma/client [external]
+[web]     ./packages/shared/src/db.ts [App Route]
+[web]     ./apps/web/lib/auth.ts [App Route]
+[web]     ./apps/web/app/api/auth/[...nextauth]/route.ts [App Route]
+[web] ⚠ [externals]/@prisma/client
+[web] unexpected export *
+[web] export * used with module [externals]/@prisma/client [external] (@prisma/client, cjs, [project]/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client) which is a CommonJS module with exports only available at runtime
+[web] List all export names manually (`export { a, b, c } from "...") or rewrite the module to ESM, to avoid the additional runtime code.`
+[web] Import trace:
+[web]   external:
+[web]     [externals]/@prisma/client [external]
+[web]     ./packages/shared/src/db.ts [Server Component]
+[web]     ./apps/web/app/pricing/page.tsx [Server Component]
+[web] ⚠ [externals]/@prisma/client
+[web] unexpected export *
+[web] export * used with module [externals]/@prisma/client [external] (@prisma/client, cjs, [project]/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client) which is a CommonJS module with exports only available at runtime
+[web] List all export names manually (`export { a, b, c } from "...") or rewrite the module to ESM, to avoid the additional runtime code.`
+[web] Import trace:
+[web]   external:
+[web]     [externals]/@prisma/client [external]
+[web]     ./packages/shared/src/db.ts [App Route]
+[web]     ./apps/web/app/api/jobs/route.ts [App Route]
+[web]  POST /api/chat 200 in 12.7s (compile: 46ms, proxy.ts: 44ms, render: 12.6s)
+[web] ⚠ [externals]/@prisma/client
+[web] unexpected export *
+[web] export * used with module [externals]/@prisma/client [external] (@prisma/client, cjs, [project]/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client) which is a CommonJS module with exports only available at runtime
+[web] List all export names manually (`export { a, b, c } from "...") or rewrite the module to ESM, to avoid the additional runtime code.`
+[web] Import trace:
+[web]   external:
+[web]     [externals]/@prisma/client [external]
+[web]     ./packages/shared/src/db.ts [App Route]
+[web]     ./apps/web/app/api/jobs/route.ts [App Route]
+[web]  POST /api/jobs 201 in 450ms (compile: 221ms, proxy.ts: 15ms, render: 213ms)
+[web] ⚠ [externals]/@prisma/client
+[web] unexpected export *
+[web] export * used with module [externals]/@prisma/client [external] (@prisma/client, cjs, [project]/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client) which is a CommonJS module with exports only available at runtime
+[web] List all export names manually (`export { a, b, c } from "...") or rewrite the module to ESM, to avoid the additional runtime code.`
+[web] Import trace:
+[web]   external:
+[web]     [externals]/@prisma/client [external]
+[web]     ./packages/shared/src/db.ts [App Route]
+[web]     ./apps/web/app/api/jobs/route.ts [App Route]
+[worker] [WORKER] Starting job cmm6h3ma60005x7kquxqavzrd - 다니엘 리베스킨트의 건축철학에 관한 고찰
+[worker] --- Portfolio Chat Context ---
+[worker] assistant: 안녕하세요. 포트폴리오 제작을 도와드릴 AI 에이전트입니다. 목표 직무와 강조할 경험을 먼저 알려주세요.
+[worker] user: 나는 건축학과 지망생이고 다니엘 리베스킨트라는 건축가를 가장 좋아해. 특히 그의 작품중 유대인 베를린 박물관을 가장 좋아하고 그의 건축적 철학을 굉장히 좋아해. 그래서 나는 너가 10페이지 가량의 다니엘 리베스킨트에 대한 인물적 서사. 건축적 특징, 건축물 분석등등을 해주면 좋겠어.
+[worker] assistant: 건축학과 지망생으로서 다니엘 리베스킨트, 특히 유대인 베를린 박물관에 대한 깊은 애정과 그의 철학에 대한 탐구 의지는 매우 훌륭한 포트폴리오 주제가 될 수 있습니다. 10페이지 분량으로 인물 서사, 건축적 특징, 건축물 분석을 다루고 싶다는 요청은 충분히 이해합니다.
+[worker] 하지만 최고 수준의 AI 멘토로서, 저는 단순히 정보를 제공하는 것을 넘어 **당신의 포트폴리오가 당신의 강점과 잠재력을 가장 잘 드러낼 수 있도록 돕는 데 집중하고자 합니다.** 포트폴리오는 '당신'을 보여주는 도구이며, 리베스킨트에 대한 깊은 이해는 그 도구의 강력한 재료가 될 것입니다.
+[worker] 요청하신 내용을 바탕으로, **이 포트폴리오 섹션이 당신의 어떤 면모를 가장 효과적으로 보여줄 수 있을지** 구체화하기 위한 날카로운 후속 질문들을 드리겠습니다. 이 질문들에 대한 당신의 답변을 통해, 우리는 단순한 정보 나열을 넘어선, 당신만의 독창적이고 설득력 있는 포트폴리오를 함께 기획할 수 있을 것입니다.
+[worker] ---
+[worker] **당신의 포트폴리오를 위한 날카로운 후속 질문:**
+[worker] 1.  **"다니엘 리베스킨트의 건축 철학 중 어떤 부분이 당신의 건축적 사고방식이나 세상을 바라보는 관점에 가장 큰 영향을 주었나요? 구체적인 사례나 개념을 들어 설명해주실 수 있을까요?"**
+[worker]     *   (예: '기억의 건축', '공허의 개념', '서사적 공간', '해체주의적 접근' 등)
+[worker]     *   **멘토의 의도:** 단순한 지식 전달을 넘어, 리베스킨트의 철학이 당신의 내면에 어떻게 자리 잡았고, 당신만의 관점으로 어떻게 해석되고 있는지를 듣고 싶습니다. 이는 당신의 비판적 사고와 건축에 대한 개인적인 열정을 보여줄 수 있는 핵심적인 부분입니다.
+[worker] 2.  **"유대인 베를린 박물관을 가장 좋아한다고 하셨는데, 이 건물이 다른 리베스킨트의 작품이나 다른 건축가들의 작품과 비교했을 때 당신에게 어떤 점에서 '특별함'으로 다가오나요? 단순히 멋있다는 감상을 넘어선, 당신만의 분석적 시각이 궁금합니다."**
+[worker]     *   **멘토의 의도:** 이 질문은 당신의 분석 능력과 비교/대조 능력을 보여줄 기회입니다. 어떤 특정 요소(공간 경험, 재료 사용, 빛의 처리, 상징성 등)가 당신에게 깊은 인상을 주었는지, 그리고 그것이 다른 건축물과 어떻게 차별화되는지를 구체적으로 설명해주세요.
+[worker] 3.  **"이 10페이지 분량의 포트폴리오를 통해 당신이 건축학과 지원 시 어떤 강점이나 잠재력을 보여주고 싶으신가요? 예를 들어, 비판적 사고, 분석 능력, 시각화 능력, 특정 디자인 철학에 대한 이해, 스토리텔링 능력 등 어떤 역량을 강조하고 싶으신가요?"**
+[worker]     *   **멘토의 의도:** 포트폴리오는 목적 지향적이어야 합니다. 당신이 보여주고 싶은 핵심 역량이 무엇인지 명확히 해야, 그에 맞춰 내용 구성과 표현 방식을 최적화할 수 있습니다.
+[worker] 4.  **"현재 이 주제에 대해 어떤 자료를 찾아보셨고, 어떤 아이디어나 초안을 가지고 계신가요? 당신의 기존 생각이나 연구를 바탕으로 제가 어떤 부분을 더 심화하거나, 새로운 시각을 제시해드릴 수 있을지 알려주세요."**
+[worker]     *   **멘토의 의도:** 당신의 현재 준비 상태를 파악하여, 제가 제공할 조언이 가장 효과적일 수 있도록 맞춤형 지원을 하기 위함입니다. 이미 가지고 있는 생각이나 자료가 있다면 주저 없이 공유해주세요.
+[worker] 5.  **"이 포트폴리오 섹션에 당신의 '개인적인 해석'이나 '창의적인 시각'을 어떤 방식으로 담아내고 싶으신가요? 단순히 리베스킨트에 대한 정보를 나열하는 것을 넘어, 당신의 독창적인 아이디어나 드로잉, 다이어그램, 작은 모형 등으로 어떻게 시각화할 계획이 있으신가요?"**
+[worker]     *   **멘토의 의도:** 건축 포트폴리오는 시각적인 요소가 매우 중요합니다. 리베스킨트의 건축을 당신의 손으로 직접 분석하고 재해석하는 과정 자체가 당신의 건축적 잠재력을 가장 잘 보여줄 수 있는 부분입니다. 예를 들어, 유대인 박물관의 '공허의 공간'을 당신만의 다이어그램으로 분석하거나, 특정 공간의 경험을 스케치로 표현하는 등, 어떤 시각적 표현 방식을 구상하고 있는지 궁금합니다.
+[worker] ---
+[worker] 이 질문들에 대한 당신의 답변을 기다리겠습니다. 당신의 생각을 구체화할수록, 우리는 더욱 강력하고 당신다운 포트폴리오를 만들어갈 수 있을 것입니다. 답변은 길고 상세하게 해주셔도 좋습니다.
+[worker] [RESEARCH] Gathering sources for '다니엘 리베스킨트의 건축철학에 관한 고찰
+[worker] --- Portfolio Chat Context ---
+[worker] assistant: 안녕하세요. 포트폴리오 제작을 도와드릴 AI 에이전트입니다. 목표 직무와 강조할 경험을 먼저 알려주세요.
+[worker] user: 나는 건축학과 지망생이고 다니엘 리베스킨트라는 건축가를 가장 좋아해. 특히 그의 작품중 유대인 베를린 박물관을 가장 좋아하고 그의 건축적 철학을 굉장히 좋아해. 그래서 나는 너가 10페이지 가량의 다니엘 리베스킨트에 대한 인물적 서사. 건축적 특징, 건축물 분석등등을 해주면 좋겠어.
+[worker] assistant: 건축학과 지망생으로서 다니엘 리베스킨트, 특히 유대인 베를린 박물관에 대한 깊은 애정과 그의 철학에 대한 탐구 의지는 매우 훌륭한 포트폴리오 주제가 될 수 있습니다. 10페이지 분량으로 인물 서사, 건축적 특징, 건축물 분석을 다루고 싶다는 요청은 충분히 이해합니다.
+[worker] 하지만 최고 수준의 AI 멘토로서, 저는 단순히 정보를 제공하는 것을 넘어 **당신의 포트폴리오가 당신의 강점과 잠재력을 가장 잘 드러낼 수 있도록 돕는 데 집중하고자 합니다.** 포트폴리오는 '당신'을 보여주는 도구이며, 리베스킨트에 대한 깊은 이해는 그 도구의 강력한 재료가 될 것입니다.
+[worker] 요청하신 내용을 바탕으로, **이 포트폴리오 섹션이 당신의 어떤 면모를 가장 효과적으로 보여줄 수 있을지** 구체화하기 위한 날카로운 후속 질문들을 드리겠습니다. 이 질문들에 대한 당신의 답변을 통해, 우리는 단순한 정보 나열을 넘어선, 당신만의 독창적이고 설득력 있는 포트폴리오를 함께 기획할 수 있을 것입니다.
+[worker] ---
+[worker] **당신의 포트폴리오를 위한 날카로운 후속 질문:**
+[worker] 1.  **"다니엘 리베스킨트의 건축 철학 중 어떤 부분이 당신의 건축적 사고방식이나 세상을 바라보는 관점에 가장 큰 영향을 주었나요? 구체적인 사례나 개념을 들어 설명해주실 수 있을까요?"**
+[worker]     *   (예: '기억의 건축', '공허의 개념', '서사적 공간', '해체주의적 접근' 등)
+[worker]     *   **멘토의 의도:** 단순한 지식 전달을 넘어, 리베스킨트의 철학이 당신의 내면에 어떻게 자리 잡았고, 당신만의 관점으로 어떻게 해석되고 있는지를 듣고 싶습니다. 이는 당신의 비판적 사고와 건축에 대한 개인적인 열정을 보여줄 수 있는 핵심적인 부분입니다.
+[worker] 2.  **"유대인 베를린 박물관을 가장 좋아한다고 하셨는데, 이 건물이 다른 리베스킨트의 작품이나 다른 건축가들의 작품과 비교했을 때 당신에게 어떤 점에서 '특별함'으로 다가오나요? 단순히 멋있다는 감상을 넘어선, 당신만의 분석적 시각이 궁금합니다."**
+[worker]     *   **멘토의 의도:** 이 질문은 당신의 분석 능력과 비교/대조 능력을 보여줄 기회입니다. 어떤 특정 요소(공간 경험, 재료 사용, 빛의 처리, 상징성 등)가 당신에게 깊은 인상을 주었는지, 그리고 그것이 다른 건축물과 어떻게 차별화되는지를 구체적으로 설명해주세요.
+[worker] 3.  **"이 10페이지 분량의 포트폴리오를 통해 당신이 건축학과 지원 시 어떤 강점이나 잠재력을 보여주고 싶으신가요? 예를 들어, 비판적 사고, 분석 능력, 시각화 능력, 특정 디자인 철학에 대한 이해, 스토리텔링 능력 등 어떤 역량을 강조하고 싶으신가요?"**
+[worker]     *   **멘토의 의도:** 포트폴리오는 목적 지향적이어야 합니다. 당신이 보여주고 싶은 핵심 역량이 무엇인지 명확히 해야, 그에 맞춰 내용 구성과 표현 방식을 최적화할 수 있습니다.
+[worker] 4.  **"현재 이 주제에 대해 어떤 자료를 찾아보셨고, 어떤 아이디어나 초안을 가지고 계신가요? 당신의 기존 생각이나 연구를 바탕으로 제가 어떤 부분을 더 심화하거나, 새로운 시각을 제시해드릴 수 있을지 알려주세요."**
+[worker]     *   **멘토의 의도:** 당신의 현재 준비 상태를 파악하여, 제가 제공할 조언이 가장 효과적일 수 있도록 맞춤형 지원을 하기 위함입니다. 이미 가지고 있는 생각이나 자료가 있다면 주저 없이 공유해주세요.
+[worker] 5.  **"이 포트폴리오 섹션에 당신의 '개인적인 해석'이나 '창의적인 시각'을 어떤 방식으로 담아내고 싶으신가요? 단순히 리베스킨트에 대한 정보를 나열하는 것을 넘어, 당신의 독창적인 아이디어나 드로잉, 다이어그램, 작은 모형 등으로 어떻게 시각화할 계획이 있으신가요?"**
+[worker]     *   **멘토의 의도:** 건축 포트폴리오는 시각적인 요소가 매우 중요합니다. 리베스킨트의 건축을 당신의 손으로 직접 분석하고 재해석하는 과정 자체가 당신의 건축적 잠재력을 가장 잘 보여줄 수 있는 부분입니다. 예를 들어, 유대인 박물관의 '공허의 공간'을 당신만의 다이어그램으로 분석하거나, 특정 공간의 경험을 스케치로 표현하는 등, 어떤 시각적 표현 방식을 구상하고 있는지 궁금합니다.
+[worker] ---
+[worker] 이 질문들에 대한 당신의 답변을 기다리겠습니다. 당신의 생각을 구체화할수록, 우리는 더욱 강력하고 당신다운 포트폴리오를 만들어갈 수 있을 것입니다. 답변은 길고 상세하게 해주셔도 좋습니다.'
+[web]  GET /api/jobs?id=cmm6h3ma60005x7kquxqavzrd 200 in 194ms (compile: 37ms, proxy.ts: 39ms, render: 118ms)
+[worker] [RESEARCH] Wikipedia API fetch failed. Using fallback sources.
+[worker] [RESEARCH] Saved 5 safe sources.
+[worker] [WRITE] Generating draft for '다니엘 리베스킨트의 건축철학에 관한 고찰
+[worker] --- Portfolio Chat Context ---
+[worker] assistant: 안녕하세요. 포트폴리오 제작을 도와드릴 AI 에이전트입니다. 목표 직무와 강조할 경험을 먼저 알려주세요.
+[worker] user: 나는 건축학과 지망생이고 다니엘 리베스킨트라는 건축가를 가장 좋아해. 특히 그의 작품중 유대인 베를린 박물관을 가장 좋아하고 그의 건축적 철학을 굉장히 좋아해. 그래서 나는 너가 10페이지 가량의 다니엘 리베스킨트에 대한 인물적 서사. 건축적 특징, 건축물 분석등등을 해주면 좋겠어.
+[worker] assistant: 건축학과 지망생으로서 다니엘 리베스킨트, 특히 유대인 베를린 박물관에 대한 깊은 애정과 그의 철학에 대한 탐구 의지는 매우 훌륭한 포트폴리오 주제가 될 수 있습니다. 10페이지 분량으로 인물 서사, 건축적 특징, 건축물 분석을 다루고 싶다는 요청은 충분히 이해합니다.
+[worker] 하지만 최고 수준의 AI 멘토로서, 저는 단순히 정보를 제공하는 것을 넘어 **당신의 포트폴리오가 당신의 강점과 잠재력을 가장 잘 드러낼 수 있도록 돕는 데 집중하고자 합니다.** 포트폴리오는 '당신'을 보여주는 도구이며, 리베스킨트에 대한 깊은 이해는 그 도구의 강력한 재료가 될 것입니다.
+[worker] 요청하신 내용을 바탕으로, **이 포트폴리오 섹션이 당신의 어떤 면모를 가장 효과적으로 보여줄 수 있을지** 구체화하기 위한 날카로운 후속 질문들을 드리겠습니다. 이 질문들에 대한 당신의 답변을 통해, 우리는 단순한 정보 나열을 넘어선, 당신만의 독창적이고 설득력 있는 포트폴리오를 함께 기획할 수 있을 것입니다.
+[worker] ---
+[worker] **당신의 포트폴리오를 위한 날카로운 후속 질문:**
+[worker] 1.  **"다니엘 리베스킨트의 건축 철학 중 어떤 부분이 당신의 건축적 사고방식이나 세상을 바라보는 관점에 가장 큰 영향을 주었나요? 구체적인 사례나 개념을 들어 설명해주실 수 있을까요?"**
+[worker]     *   (예: '기억의 건축', '공허의 개념', '서사적 공간', '해체주의적 접근' 등)
+[worker]     *   **멘토의 의도:** 단순한 지식 전달을 넘어, 리베스킨트의 철학이 당신의 내면에 어떻게 자리 잡았고, 당신만의 관점으로 어떻게 해석되고 있는지를 듣고 싶습니다. 이는 당신의 비판적 사고와 건축에 대한 개인적인 열정을 보여줄 수 있는 핵심적인 부분입니다.
+[worker] 2.  **"유대인 베를린 박물관을 가장 좋아한다고 하셨는데, 이 건물이 다른 리베스킨트의 작품이나 다른 건축가들의 작품과 비교했을 때 당신에게 어떤 점에서 '특별함'으로 다가오나요? 단순히 멋있다는 감상을 넘어선, 당신만의 분석적 시각이 궁금합니다."**
+[worker]     *   **멘토의 의도:** 이 질문은 당신의 분석 능력과 비교/대조 능력을 보여줄 기회입니다. 어떤 특정 요소(공간 경험, 재료 사용, 빛의 처리, 상징성 등)가 당신에게 깊은 인상을 주었는지, 그리고 그것이 다른 건축물과 어떻게 차별화되는지를 구체적으로 설명해주세요.
+[worker] 3.  **"이 10페이지 분량의 포트폴리오를 통해 당신이 건축학과 지원 시 어떤 강점이나 잠재력을 보여주고 싶으신가요? 예를 들어, 비판적 사고, 분석 능력, 시각화 능력, 특정 디자인 철학에 대한 이해, 스토리텔링 능력 등 어떤 역량을 강조하고 싶으신가요?"**
+[worker]     *   **멘토의 의도:** 포트폴리오는 목적 지향적이어야 합니다. 당신이 보여주고 싶은 핵심 역량이 무엇인지 명확히 해야, 그에 맞춰 내용 구성과 표현 방식을 최적화할 수 있습니다.
+[worker] 4.  **"현재 이 주제에 대해 어떤 자료를 찾아보셨고, 어떤 아이디어나 초안을 가지고 계신가요? 당신의 기존 생각이나 연구를 바탕으로 제가 어떤 부분을 더 심화하거나, 새로운 시각을 제시해드릴 수 있을지 알려주세요."**
+[worker]     *   **멘토의 의도:** 당신의 현재 준비 상태를 파악하여, 제가 제공할 조언이 가장 효과적일 수 있도록 맞춤형 지원을 하기 위함입니다. 이미 가지고 있는 생각이나 자료가 있다면 주저 없이 공유해주세요.
+[worker] 5.  **"이 포트폴리오 섹션에 당신의 '개인적인 해석'이나 '창의적인 시각'을 어떤 방식으로 담아내고 싶으신가요? 단순히 리베스킨트에 대한 정보를 나열하는 것을 넘어, 당신의 독창적인 아이디어나 드로잉, 다이어그램, 작은 모형 등으로 어떻게 시각화할 계획이 있으신가요?"**
+[worker]     *   **멘토의 의도:** 건축 포트폴리오는 시각적인 요소가 매우 중요합니다. 리베스킨트의 건축을 당신의 손으로 직접 분석하고 재해석하는 과정 자체가 당신의 건축적 잠재력을 가장 잘 보여줄 수 있는 부분입니다. 예를 들어, 유대인 박물관의 '공허의 공간'을 당신만의 다이어그램으로 분석하거나, 특정 공간의 경험을 스케치로 표현하는 등, 어떤 시각적 표현 방식을 구상하고 있는지 궁금합니다.
+[worker] ---
+[worker] 이 질문들에 대한 당신의 답변을 기다리겠습니다. 당신의 생각을 구체화할수록, 우리는 더욱 강력하고 당신다운 포트폴리오를 만들어갈 수 있을 것입니다. 답변은 길고 상세하게 해주셔도 좋습니다.'
+[worker] [WORKER] Failed job cmm6h3ma60005x7kquxqavzrd: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1/models/gemini-2.5-pro:generateContent: [429 Too Many Requests] You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. 
+[worker] * Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 0, model: gemini-2.5-pro
+[worker] * Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 0, model: gemini-2.5-pro
+[worker] * Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_input_token_count, limit: 0, model: gemini-2.5-pro
+[worker] * Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_input_token_count, limit: 0, model: gemini-2.5-pro
+[worker] Please retry in 13.390663839s. [{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Learn more about Gemini API quotas","url":"https://ai.google.dev/gemini-api/docs/rate-limits"}]},{"@type":"type.googleapis.com/google.rpc.QuotaFailure","violations":[{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_requests","quotaId":"GenerateRequestsPerDayPerProjectPerModel-FreeTier","quotaDimensions":{"location":"global","model":"gemini-2.5-pro"}},{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_requests","quotaId":"GenerateRequestsPerMinutePerProjectPerModel-FreeTier","quotaDimensions":{"location":"global","model":"gemini-2.5-pro"}},{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_input_token_count","quotaId":"GenerateContentInputTokensPerModelPerMinute-FreeTier","quotaDimensions":{"location":"global","model":"gemini-2.5-pro"}},{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_input_token_count","quotaId":"GenerateContentInputTokensPerModelPerDay-FreeTier","quotaDimensions":{"location":"global","model":"gemini-2.5-pro"}}]},{"@type":"type.googleapis.com/google.rpc.RetryInfo","retryDelay":"13s"}]
+[web] ⚠ [externals]/@prisma/client
+[web] unexpected export *
+[web] export * used with module [externals]/@prisma/client [external] (@prisma/client, cjs, [project]/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client) which is a CommonJS module with exports only available at runtime
+[web] List all export names manually (`export { a, b, c } from "...") or rewrite the module to ESM, to avoid the additional runtime code.`
+[web] Import trace:
+[web]   external:
+[web]     [externals]/@prisma/client [external]
+[web]     ./packages/shared/src/db.ts [App Route]
+[web]     ./apps/web/app/api/jobs/route.ts [App Route]
+[web]  GET /api/jobs?id=cmm6h3ma60005x7kquxqavzrd 200 in 61ms (compile: 13ms, proxy.ts: 12ms, render: 36ms)
+[worker] [WORKER] Heartbeat...
+[worker] [WORKER] Heartbeat...
+[worker] [WORKER] Heartbeat...
+[worker] [WORKER] Heartbeat...
+[worker] [WORKER] Heartbeat...
+[web] ⚠ [externals]/@prisma/client
+[web] unexpected export *
+[web] export * used with module [externals]/@prisma/client [external] (@prisma/client, cjs, [project]/node_modules/.pnpm/@prisma+client@5.22.0_prisma@5.22.0/node_modules/@prisma/client) which is a CommonJS module with exports only available at runtime
+[web] List all export names manually (`export { a, b, c } from "...") or rewrite the module to ESM, to avoid the additional runtime code.`
+[web] Import trace:
+[web]   external:
+[web]     [externals]/@prisma/client [external]
+[web]     ./packages/shared/src/db.ts [App Route]
+[web]     ./apps/web/lib/auth.ts [App Route]
+[web]     ./apps/web/app/api/auth/[...nextauth]/route.ts [App Route]
+[web]  GET /api/auth/session 200 in 223ms (compile: 122ms, proxy.ts: 24ms, render: 78ms)
+[worker] [WORKER] Heartbeat...
+[worker] [WORKER] Heartbeat...
+[worker] [WORKER] Heartbeat...
+[worker] 오전 12:33:31 [tsx] change in ./src\stages\write.ts Restarting...
+[worker] [WORKER] REDIS_URL is empty. Running in DB polling mode only.
+[worker] c오전 12:34:14 [tsx] change in ./src\stages\write.ts Restarting...
+[worker] [WORKER] REDIS_URL is empty. Running in DB polling mode only.

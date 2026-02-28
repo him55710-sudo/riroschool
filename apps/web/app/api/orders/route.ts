@@ -2,13 +2,22 @@ import { NextResponse } from 'next/server';
 import { prisma } from 'shared';
 import { authorizeApi } from "../../../lib/api-rbac";
 
+type CreateOrderBody = {
+    product?: string;
+};
+
+const getErrorMessage = (error: unknown, fallback: string) => {
+    if (error instanceof Error && error.message) return error.message;
+    return fallback;
+};
+
 export async function POST(req: Request) {
     const auth = await authorizeApi("orders:create");
     if (!auth.ok) return auth.response;
 
     try {
-        const body = await req.json();
-        const { product } = body;
+        const body = (await req.json()) as CreateOrderBody;
+        const product = body.product;
 
         let amount = 0;
         let orderName = "";
@@ -53,7 +62,7 @@ export async function POST(req: Request) {
             customerName: user.name || "Customer",
             customerEmail: user.email,
         }, { status: 200 });
-    } catch (error: any) {
-        return NextResponse.json({ error: error.message }, { status: 500 });
+    } catch (error: unknown) {
+        return NextResponse.json({ error: getErrorMessage(error, "Failed to create order") }, { status: 500 });
     }
 }

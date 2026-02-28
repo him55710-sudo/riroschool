@@ -2,12 +2,28 @@ import { NextResponse } from 'next/server';
 import { paymentProvider, grantCredits, prisma } from 'shared';
 import { authorizeApi } from "../../../../../lib/api-rbac";
 
+type MockWebhookBody = {
+    amount?: number;
+    product?: string;
+};
+
+const getErrorMessage = (error: unknown, fallback: string) => {
+    if (error instanceof Error && error.message) return error.message;
+    return fallback;
+};
+
 export async function POST(req: Request) {
     const auth = await authorizeApi("webhooks:payment:mock");
     if (!auth.ok) return auth.response;
 
     try {
-        const { amount, product } = await req.json();
+        const body = (await req.json()) as MockWebhookBody;
+        const amount = body.amount;
+        const product = body.product;
+
+        if (typeof amount !== "number" || !product) {
+            return NextResponse.json({ error: "Invalid payload" }, { status: 400 });
+        }
 
         // 1. Create Checkout (in real world, this returns a URL to Toss/PortOne)
         const { orderId } = await paymentProvider.createCheckout(auth.context.userId, product, amount);
@@ -35,8 +51,8 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: "Payment verification failed" }, { status: 400 });
         }
 
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error(`[MockWebhook] Error:`, error);
-        return NextResponse.json({ error: error.message }, { status: 500 });
+        return NextResponse.json({ error: getErrorMessage(error, "Mock webhook failed") }, { status: 500 });
     }
 }

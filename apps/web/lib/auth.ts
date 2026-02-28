@@ -2,13 +2,16 @@ import { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@auth/prisma-adapter";
+import type { Adapter } from "next-auth/adapters";
 import { prisma } from "shared";
 import {
     hasGoogleOAuthCredentials as hasValidGoogleOAuthCredentials,
     normalizeGoogleClientId,
 } from "./auth-env";
+import { isAdminEmail } from "./rbac";
 
 let warnedMissingGoogleOAuth = false;
+const ADMIN_BASE_CREDITS = Number(process.env.ADMIN_BASE_CREDITS || "10000");
 
 const getGoogleOAuthConfig = () => {
     const clientId = normalizeGoogleClientId(process.env.GOOGLE_CLIENT_ID || "");
@@ -39,6 +42,11 @@ export const getAuthOptions = (): NextAuthOptions => {
             GoogleProvider({
                 clientId: google.clientId,
                 clientSecret: google.clientSecret,
+                authorization: {
+                    params: {
+                        prompt: "select_account",
+                    },
+                },
             })
         ]
         : [
@@ -53,16 +61,36 @@ export const getAuthOptions = (): NextAuthOptions => {
         ];
 
     return {
-        adapter: PrismaAdapter(prisma) as any,
+        adapter: PrismaAdapter(prisma) as Adapter,
         providers,
         session: { strategy: "jwt" as const },
         callbacks: {
-            async session({ session, token }: any) {
-                if (session.user) {
-                    session.user.id = token.sub as string;
-                    // Fetch fresh credits
-                    const dbUser = await prisma.user.findUnique({ where: { id: token.sub! } });
-                    if (dbUser) session.user.credits = dbUser.credits;
+            async session({ session, token }) {
+                if (session.user && token.sub) {
+                    session.user.id = token.sub;
+                    const dbUser = await prisma.user.findUnique({
+                        where: { id: token.sub },
+                        select: { credits: true, email: true },
+                    });
+
+                    if (dbUser) {
+                        const admin = isAdminEmail(dbUser.email || session.user.email);
+                        session.user.isAdmin = admin;
+
+                        let credits = dbUser.credits;
+                        if (admin && Number.isFinite(ADMIN_BASE_CREDITS) && ADMIN_BASE_CREDITS > 0 && credits < ADMIN_BASE_CREDITS) {
+                            const updated = await prisma.user.update({
+                                where: { id: token.sub },
+                                data: { credits: ADMIN_BASE_CREDITS },
+                                select: { credits: true },
+                            });
+                            credits = updated.credits;
+                        }
+
+                        session.user.credits = credits;
+                    } else {
+                        session.user.isAdmin = isAdminEmail(session.user.email);
+                    }
                 }
                 return session;
             }

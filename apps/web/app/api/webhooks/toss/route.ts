@@ -1,15 +1,28 @@
 import { NextResponse } from 'next/server';
 import { prisma } from 'shared';
 
+type TossWebhookData = {
+    orderId?: string;
+    status?: string;
+    secret?: string;
+    [key: string]: unknown;
+};
+
+type TossWebhookBody = {
+    data?: TossWebhookData;
+};
+
+const getErrorMessage = (error: unknown, fallback: string) => {
+    if (error instanceof Error && error.message) return error.message;
+    return fallback;
+};
+
 export async function POST(req: Request) {
     try {
-        const body = await req.json();
+        const body = (await req.json()) as TossWebhookBody;
 
         // Toss Payments Webhook spec
-        const {
-            eventType, // e.g. "PAYMENT_STATUS_CHANGED"
-            data // contains paymentKey, orderId, status, secret, etc.
-        } = body;
+        const { data } = body;
 
         if (!data || !data.orderId) {
             return NextResponse.json({ error: "Invalid webhook payload" }, { status: 400 });
@@ -77,8 +90,8 @@ export async function POST(req: Request) {
 
         return NextResponse.json({ success: true }, { status: 200 });
 
-    } catch (error: any) {
-        console.error(`[Webhook] CRITICAL Error processing Toss webhook: ${error.message}`, error);
+    } catch (error: unknown) {
+        console.error(`[Webhook] CRITICAL Error processing Toss webhook: ${getErrorMessage(error, "Unknown error")}`, error);
         // Return 500 so Toss retries if something threw unexpectedly
         return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
     }

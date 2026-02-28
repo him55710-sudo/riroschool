@@ -16,6 +16,21 @@ const TIER_COSTS: Record<string, number> = {
 const LOCAL_FALLBACK_DELAY_MS = Number(process.env.LOCAL_JOB_FALLBACK_DELAY_MS || "12000");
 const ENABLE_LOCAL_FALLBACK = process.env.ENABLE_LOCAL_JOB_FALLBACK === "1";
 
+const getErrorMessage = (error: unknown, fallback: string) => {
+    if (error instanceof Error && error.message) return error.message;
+    return fallback;
+};
+
+const hasGeminiModel = () => {
+    const key = (process.env.GEMINI_API_KEY || "").trim().toLowerCase();
+    return key.length > 0 && !key.includes("your_gemini_api_key_here");
+};
+
+const hasOllamaFallback = () =>
+    process.env.OLLAMA_DISABLED !== "1" &&
+    (process.env.OLLAMA_ENABLED || "0").trim() === "1" &&
+    (process.env.OLLAMA_MODEL || "").trim().length > 0;
+
 const buildLocalFallbackHtml = (topic: string, language: string, tier: string) => {
     const locale = language === "English" ? "en-US" : "ko-KR";
     const generatedAt = new Date().toLocaleString(locale);
@@ -109,12 +124,12 @@ async function processLocallyIfStillPending(jobId: string) {
         await prisma.jobLog.create({
             data: { jobId, stage: "DONE", message: "로컬 fallback 보고서 생성이 완료되었습니다." },
         });
-    } catch (error: any) {
+    } catch (error: unknown) {
         await prisma.job.update({
             where: { id: jobId },
             data: {
                 status: "FAILED",
-                errorMessage: error?.message || "Local fallback failed",
+                errorMessage: getErrorMessage(error, "Local fallback failed"),
             },
         });
     }
@@ -139,6 +154,13 @@ export async function POST(req: Request) {
 
         if (!userId && cost > 0) {
             return NextResponse.json({ error: "유료 플랜은 로그인 후 이용할 수 있습니다." }, { status: 401 });
+        }
+
+        if (parsed.tier !== "FREE" && !hasGeminiModel() && !hasOllamaFallback()) {
+            return NextResponse.json(
+                { error: "고품질 보고서를 위해 GEMINI_API_KEY를 설정해 주세요. (현재 Ollama fallback 비활성)" },
+                { status: 503 },
+            );
         }
 
         const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
@@ -179,8 +201,8 @@ export async function POST(req: Request) {
         if (cost > 0 && userId) {
             try {
                 await deductCredits(userId, cost, "JOB_COST");
-            } catch (e: any) {
-                return NextResponse.json({ error: e.message || "크레딧이 부족합니다." }, { status: 402 });
+            } catch (error: unknown) {
+                return NextResponse.json({ error: getErrorMessage(error, "크레딧이 부족합니다.") }, { status: 402 });
             }
         }
 
@@ -210,8 +232,8 @@ export async function POST(req: Request) {
             setGuestJobsCookie(response, appendGuestJobId(identity.guestJobIds, job.id));
         }
         return response;
-    } catch (error: any) {
-        return NextResponse.json({ error: error.message || "작업 생성에 실패했습니다." }, { status: 400 });
+    } catch (error: unknown) {
+        return NextResponse.json({ error: getErrorMessage(error, "작업 생성에 실패했습니다.") }, { status: 400 });
     }
 }
 
@@ -223,7 +245,12 @@ export async function GET(req: Request) {
     if (id) {
         const job = await prisma.job.findUnique({
             where: { id },
-            include: { logs: true },
+            include: {
+                logs: {
+                    orderBy: { ts: "desc" },
+                    take: 80,
+                },
+            },
         });
         if (!job) return NextResponse.json({ error: "작업을 찾을 수 없습니다." }, { status: 404 });
 

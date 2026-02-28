@@ -3,12 +3,23 @@ import { prisma } from 'shared';
 import { v4 as uuidv4 } from 'uuid';
 import { authorizeApi, canAccessOwnedResource } from "../../../../../lib/api-rbac";
 
+type ConfirmPaymentBody = {
+    paymentKey?: string;
+    orderId?: string;
+    amount?: number | string;
+};
+
+const getErrorMessage = (error: unknown, fallback: string) => {
+    if (error instanceof Error && error.message) return error.message;
+    return fallback;
+};
+
 export async function POST(req: Request) {
     const auth = await authorizeApi("payments:confirm");
     if (!auth.ok) return auth.response;
 
     try {
-        const body = await req.json();
+        const body = (await req.json()) as ConfirmPaymentBody;
         const { paymentKey, orderId, amount } = body;
 
         if (!paymentKey || !orderId || !amount) {
@@ -125,8 +136,8 @@ export async function POST(req: Request) {
         }
 
         return NextResponse.json({ status: paymentStatus }, { status: 200 });
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error("Payment Confirmation API Exception:", error);
-        return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+        return NextResponse.json({ error: getErrorMessage(error, "Internal Server Error") }, { status: 500 });
     }
 }

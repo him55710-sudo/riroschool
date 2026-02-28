@@ -25,11 +25,11 @@ export class MockPaymentProvider implements PaymentProvider {
         };
     }
 
-    async verifyPayment(providerTxId: string) {
+    async verifyPayment(_providerTxId: string) {
         return true; // Auto-pass in mock
     }
 
-    async handleWebhook(payload: any, signature: string) {
+    async handleWebhook(payload: any, _signature: string) {
         // Basic mock webhook format: { orderId: '...', status: 'PAID' }
         return {
             orderId: payload.orderId,
